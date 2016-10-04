@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">Popular Movies</string>
+    <string name="action_settings">Settings</string>
+    <string name="movie_detail">Movie Detail</string>
+
+    <string name="pref_sort_label">Sort by</string>
+    <string name="pref_sort_key" translatable="false">sort</string>
+    <string name="pref_popular" translatable="false">popular</string>
+    <string name="pref_sort_default" translatable="false">popular</string>
+    <string name="pref_top_rated" translatable="false">top_rated</string>
+    <string name="pref_top_rated_label">Top Rated</string>
+    <string name="pref_popular_label">Most Popular</string>
+
+    <string name="empty_gridview">Oops! No movie posters available.</string>
+</resources>
