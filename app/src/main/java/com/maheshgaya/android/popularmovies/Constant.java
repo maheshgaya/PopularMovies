@@ -19,6 +19,7 @@ public class Constant {
 
     //names of JSON tags to be extracted
     public final static String TMDB_RESULTS = "results";
+    public final static String TMDB_ID = "id";
     public final static String TMDB_TITLE = "original_title";
     public final static String TMDB_THUMBNAIL_URL = "poster_path";
     public final static String TMDB_PLOT = "overview";

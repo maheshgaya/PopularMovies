@@ -40,7 +40,7 @@
         jar="/Users/warriorgarrosh/Android/Nanodegree/PopularMovies/app/build/intermediates/incremental-classes/debug/instant-run-bootstrap.jar"
         jumboMode="true"
         revision="24.0.2"
-        sha1="a0eeb7b350d083560eab482a3a90681fe086ec93">
+        sha1="9f6483b76e7598dc43c54913ffd4b3044c6371e9">
         <dex dex="/Users/warriorgarrosh/Android/Nanodegree/PopularMovies/app/build/intermediates/transforms/dex/debug/folders/1000/10/instant-run-bootstrap_6129ce0eec6492f22d0ce61fcdd1debcbee77dea/classes.dex" />
     </item>
     <item
@@ -103,7 +103,7 @@
         jar="/Users/warriorgarrosh/Android/Nanodegree/PopularMovies/app/build/intermediates/incremental-runtime-classes/debug/instant-run.jar"
         jumboMode="true"
         revision="24.0.2"
-        sha1="3596349dec3c14e4989b334499ce6eef7d0ce68e">
+        sha1="33381da682d2637b27524e17b42203b2ed01bc19">
         <dex dex="/Users/warriorgarrosh/Android/Nanodegree/PopularMovies/app/build/intermediates/transforms/dex/debug/folders/1000/10/instant-run_f1a325913ec21f26378366a1f96241eefa1eb8e3/classes.dex" />
     </item>
     <item
