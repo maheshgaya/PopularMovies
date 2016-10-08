@@ -15,12 +15,29 @@ public class MovieContract {
 
     //URI Parameters Config
     //example: content://com.maheshgaya.android.popularmovies.app/movies
-    public static final String PATH_MOVIES = "movie";
+    public static final String PATH_MOVIES = "movies";
+    public static final String PATH_TRAILERS = "trailers";
+    public static final String PATH_FAVORITES = "favorites";
 
-    //BASE URL for image path
+    //BASE URL for image path TODO: Decide if this needs to be done in movie class or here
     private static final String IMAGE_PATH_BASE_URL = "http://image.tmdb.org/t/p/w185/";
 
+    private MovieContract(){
+        //prevent other classes from accidently defining this class
+    }
+
     public static final class MovieEntry implements BaseColumns{
+        //create content URI
+        public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon()
+                .appendPath(PATH_MOVIES).build();
+        //create cursor of base type directory for multiple entries
+        public static final String CONTENT_DIR_TYPE =
+                ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_MOVIES;
+        // create cursor of base type item for single entry
+        public static final String CONTENT_ITEM_TYPE =
+                ContentResolver.CURSOR_ITEM_BASE_TYPE +"/" + CONTENT_AUTHORITY + "/" + PATH_MOVIES;
+
+        /*DEFINE TABLE*/
         //TABLE NAME
         public static final String TABLE_MOVIES = "movie";
         //COLUMNS
@@ -31,15 +48,7 @@ public class MovieContract {
         public static final String COLUMN_RATINGS = "ratings";
         public static final String COLUMN_RELEASE_DATE = "release_date";
 
-        //create content URI
-        public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon()
-                .appendPath(TABLE_MOVIES).build();
-        //create cursor of base type directory for multiple entries
-        public static final String CONTENT_DIR_TYPE =
-                ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + TABLE_MOVIES;
-        // create cursor of base type item for single entry
-        public static final String CONTENT_ITEM_TYPE =
-                ContentResolver.CURSOR_ITEM_BASE_TYPE +"/" + CONTENT_AUTHORITY + TABLE_MOVIES;
+
 
         //for building URIs on insertion
         public static Uri buildMovieUri(long id){
@@ -48,26 +57,65 @@ public class MovieContract {
     }
 
     public static final class TrailerEntry implements BaseColumns{
+        //Create content URI
+        public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon()
+                .appendPath(PATH_TRAILERS).build();
+        //create cursor of base type directory for multiple entries
+        public static final String CONTENT_DIR_TYPE =
+                ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_TRAILERS;
+        //create cursor of base type item for single entry
+        public static final String CONTENT_ITEM_TYPE =
+                ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_TRAILERS;
+
+        /*DEFINE TABLE*/
         //TABLE NAME
         public static final String TABLE_TRAILER = "trailer";
 
         //COLUMNS
-        public static final String _ID = "_id"; //unique table id (autoincrement)
+        public static final String TRAILER_ID = "trailer_id"; //unique table id (autoincrement)
         public static final String COLUMN_MOVIE_ID = "movie_id"; //FOREIGN KEY (Can have multiple)
         //url: https://www.youtube.com/watch?v=9vN6DHB6bJc
         //The key is 9vN6DHB6bJc
         public static final String COLUMN_TRAILER_KEY = "youtube_key";
+
+
+        //for building URIs on insertion
+        public static Uri buildTrailerUri(long id){
+            return ContentUris.withAppendedId(CONTENT_URI, id);
+        }
     }
 
     /**
      * This class defines entries for the favorite functionality
      * If a user favorite a movie, it will be stored in this table
-     * Columns: _id, movie_id (Foreign key), favorite(boolean (true ["1"] if user favorite a movie)
-     * NOTE: if a movie is not favorite, it will not be in this table (the record will be deleted)
+     * Columns: _id, movie_id (Foreign key)
+     * NOTE: if a movie is not favorite, it will not be in this table
+     * (the record will be deleted if unfavorite)
      */
     public static final class FavoriteEntry implements BaseColumns{
+        //Create content URI
+        public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon()
+                .appendPath(PATH_FAVORITES).build();
+        //create cursor of base type directory for multiple entries
+        public static final String CONTENT_DIR_TYPE =
+                ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_FAVORITES;
+        //create cursor of base type item for single entry
+        public static final String CONTENT_ITEM_TYPE =
+                ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_FAVORITES;
+
+        /*DEFINE TABLE*/
         //TABLE NAME
         public static final String TABLE_FAVORITE = "favorite";
+        //COLUMNS
+        public static final String FAVORITE_ID = "favorite_id"; //autoincrement
+        public static final String COLUMN_MOVIE_ID = "movie_id"; //FOREIGN KEY
+
+
+        //for building URIs on insertion
+        public static Uri buildFavoriteUri(long id){
+            return ContentUris.withAppendedId(CONTENT_URI, id);
+        }
+
 
     }
 }
