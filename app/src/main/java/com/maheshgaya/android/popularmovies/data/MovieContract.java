@@ -39,14 +39,14 @@ public class MovieContract {
 
         /*DEFINE TABLE*/
         //TABLE NAME
-        public static final String TABLE_MOVIES = "movie";
+        public static final String TABLE_NAME = "movie";
         //COLUMNS
-        public static final String MOVIE_ID = "movie_id"; //unique movie id from API
+        public static final String _ID = "movie_id"; //unique movie id from API (non-autoincrement)
         public static final String COLUMN_TITLE = "title"; //title of the movie
         public static final String COLUMN_IMAGE_PATH = "image"; //thumbnail path of the movie
-        public static final String COLUMN_PLOT = "plot"; //
-        public static final String COLUMN_RATINGS = "ratings";
-        public static final String COLUMN_RELEASE_DATE = "release_date";
+        public static final String COLUMN_PLOT = "plot"; //plot of the movie
+        public static final String COLUMN_RATINGS = "ratings"; //rating over 10 of the movie
+        public static final String COLUMN_RELEASE_DATE = "release_date"; //release date of the movie
 
 
 
@@ -69,10 +69,10 @@ public class MovieContract {
 
         /*DEFINE TABLE*/
         //TABLE NAME
-        public static final String TABLE_TRAILER = "trailer";
+        public static final String TABLE_NAME = "trailer";
 
         //COLUMNS
-        public static final String TRAILER_ID = "trailer_id"; //unique table id (autoincrement)
+        public static final String _ID = "trailer_id"; //unique table id (autoincrement)
         public static final String COLUMN_MOVIE_ID = "movie_id"; //FOREIGN KEY (Can have multiple)
         //url: https://www.youtube.com/watch?v=9vN6DHB6bJc
         //The key is 9vN6DHB6bJc
@@ -105,9 +105,9 @@ public class MovieContract {
 
         /*DEFINE TABLE*/
         //TABLE NAME
-        public static final String TABLE_FAVORITE = "favorite";
+        public static final String TABLE_NAME = "favorite";
         //COLUMNS
-        public static final String FAVORITE_ID = "favorite_id"; //autoincrement
+        public static final String _ID = "favorite_id"; //autoincrement
         public static final String COLUMN_MOVIE_ID = "movie_id"; //FOREIGN KEY
 
 
