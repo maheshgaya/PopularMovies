@@ -19,3 +19,13 @@ build/intermediates/dex-cache/cache.xml
 .gradle/2.14.1/taskArtifacts/cache.properties.lock
 
 .idea/workspace.xml
+
+
+*.iml
+.gradle
+/local.properties
+/.idea/workspace.xml
+/.idea/libraries
+.DS_Store
+/build
+/captures
