@@ -18,13 +18,14 @@ public class MovieContract {
     public static final String PATH_MOVIES = "movies";
     public static final String PATH_TRAILERS = "trailers";
     public static final String PATH_FAVORITES = "favorites";
+    public static final String PATH_REVIEWS = "reviews";
 
-    //BASE URL for image path TODO: Decide if this needs to be done in movie class or here
     private static final String IMAGE_PATH_BASE_URL = "http://image.tmdb.org/t/p/w185/";
 
     private MovieContract(){
         //prevent other classes from accidently defining this class
     }
+
 
     public static final class MovieEntry implements BaseColumns{
         //create content URI
@@ -56,6 +57,9 @@ public class MovieContract {
         }
     }
 
+    /*
+    * API CALL URL: https://api.themoviedb.org/3/movie/{movie_id}/videos?api_key=<<api_key>>&language=en-US
+    * */
     public static final class TrailerEntry implements BaseColumns{
         //Create content URI
         public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon()
@@ -81,6 +85,35 @@ public class MovieContract {
 
         //for building URIs on insertion
         public static Uri buildTrailerUri(long id){
+            return ContentUris.withAppendedId(CONTENT_URI, id);
+        }
+    }
+
+    /*
+    * API CALL URL: https://api.themoviedb.org/3/movie/{movie_id}/reviews?api_key=<<api_key>>&language=en-US
+    * */
+    public static final class ReviewEntry implements BaseColumns{
+        //Create content URI
+        public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon()
+                .appendPath(PATH_TRAILERS).build();
+        //create cursor of base type directory for multiple entries
+        public static final String CONTENT_DIR_TYPE =
+                ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_REVIEWS;
+        //create cursor of base type item for single entry
+        public static final String CONTENT_ITEM_TYPE =
+                ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_REVIEWS;
+
+        /*DEFINE TABLE*/
+        //TABLE NAME
+        public static final String TABLE_NAME = "review";
+        //COLUMNS
+        public static final String _ID = "review_id"; //unique table id (autoincrement)
+        public static final String COLUMN_MOVIE_ID = "movie_id"; //FOREIGN KEY (can have multiple)
+        public static final String COLUMN_REVIEW_URL = "url"; //url for the review
+
+
+        //for building URIs on insertion
+        public static Uri buildReviewUri(long id){
             return ContentUris.withAppendedId(CONTENT_URI, id);
         }
     }

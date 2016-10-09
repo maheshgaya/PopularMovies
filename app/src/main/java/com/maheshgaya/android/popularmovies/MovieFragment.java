@@ -322,7 +322,7 @@ public class MovieFragment extends Fragment {
                 mMovies = result;
                 try {
                     //Log.d(TAG, "onPostExecute: " + mMovies.length);
-                    mMovieAdapter = new MovieAdapter(getContext(), result);
+                    mMovieAdapter = new MovieAdapter(getActivity(), result);
                     //Log.d(TAG, "onPostExecute: " + mMovieAdapter.getCount());
                     mMovieAdapter.notifyDataSetChanged();
                     mGridView.setAdapter(mMovieAdapter);

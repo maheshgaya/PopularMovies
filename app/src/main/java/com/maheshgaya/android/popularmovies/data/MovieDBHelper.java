@@ -54,6 +54,24 @@ public class MovieDBHelper extends SQLiteOpenHelper {
                         "FOREIGN KEY (" + MovieContract.TrailerEntry.COLUMN_MOVIE_ID + ") " +
                         "REFERENCES " + MovieContract.MovieEntry.TABLE_NAME + "(" + MovieContract.MovieEntry._ID + ")" +
                         ");";
+
+        /*
+        * CREATE TABLE review (
+        * review_id INTEGER PRIMARY KEY AUTOINCREMENT,
+        * movie_id INTEGER NOT NULL,
+        * url TEXT NOT NULL,
+        * FOREIGN KEY (movie_id) REFERENCES movie(movie_id)
+        * );
+        * */
+        final String SQL_CREATE_REVIEW_TABLE =
+                "CREATE TABLE " + MovieContract.ReviewEntry.TABLE_NAME +"("  +
+                        MovieContract.ReviewEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                        MovieContract.ReviewEntry.COLUMN_MOVIE_ID + " INTEGER NOT NULL, " +
+                        MovieContract.ReviewEntry.COLUMN_REVIEW_URL + " TEXT NOT NULL, " +
+                        "FOREIGN KEY (" + MovieContract.TrailerEntry.COLUMN_MOVIE_ID + ") " +
+                        "REFERENCES " + MovieContract.MovieEntry.TABLE_NAME + "(" + MovieContract.MovieEntry._ID + ")" +
+                        ");";
+
         /*
         * CREATE TABLE favorite(
         * favorite_id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -72,6 +90,7 @@ public class MovieDBHelper extends SQLiteOpenHelper {
                         ")";
         sqLiteDatabase.execSQL(SQL_CREATE_MOVIE_TABLE);
         sqLiteDatabase.execSQL(SQL_CREATE_TRAILER_TABLE);
+        sqLiteDatabase.execSQL(SQL_CREATE_REVIEW_TABLE);
         sqLiteDatabase.execSQL(SQL_CREATE_FAVORITE_TABLE);
     }
 
