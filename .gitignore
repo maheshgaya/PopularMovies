@@ -1,26 +1,5 @@
 
 *.lock
-
-
-*.bin
-.gradle
-build/
-.idea/
-.idea/.name
-.DS_Store
-*.apk
-*.ap_
-.gradle/2.14.1/taskArtifacts/fileSnapshots.bin
-
-.gradle/2.14.1/taskArtifacts/cache.properties.lock
-
-build/intermediates/dex-cache/cache.xml
-
-.gradle/2.14.1/taskArtifacts/cache.properties.lock
-
-.idea/workspace.xml
-
-
 *.iml
 .gradle
 /local.properties
