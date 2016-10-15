@@ -73,6 +73,36 @@ public class MovieDBHelper extends SQLiteOpenHelper {
                         ");";
 
         /*
+        * CREATE TABLE top_rated (
+        * top_rated_id INTEGER PRIMARY KEY AUTOINCREMENT,
+        * movie_id INTEGER NOT NULL,
+        * FOREIGN KEY (movie_id) REFERENCES movie(movie_id)
+        * );
+         */
+        final String SQL_CREATE_TOP_RATED_TABLE =
+                "CREATE TABLE " + MovieContract.TopRatedEntry.TABLE_NAME + "(" +
+                        MovieContract.TopRatedEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                        MovieContract.TopRatedEntry.COLUMN_MOVIE_ID + " INTEGER NOT NULL, " +
+                        "FOREIGN KEY (" + MovieContract.TopRatedEntry.COLUMN_MOVIE_ID + ") " +
+                        "REFERENCES " + MovieContract.MovieEntry.TABLE_NAME + "(" + MovieContract.MovieEntry._ID + ")" +
+                        ");";
+
+        /*
+        * CREATE TABLE most_popular (
+        * most_popular_id INTEGER PRIMARY KEY AUTOINCREMENT,
+        * movie_id INTEGER NOT NULL,
+        * FOREIGN KEY (movie_id) REFERENCES movie(movie_id)
+        * );
+         */
+        final String SQL_CREATE_MOST_POPULAR_TABLE =
+                "CREATE TABLE " + MovieContract.MostPopularEntry.TABLE_NAME + "(" +
+                        MovieContract.MostPopularEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                        MovieContract.MostPopularEntry.COLUMN_MOVIE_ID + " INTEGER NOT NULL, " +
+                        "FOREIGN KEY (" + MovieContract.MostPopularEntry.COLUMN_MOVIE_ID + ") " +
+                        "REFERENCES " + MovieContract.MovieEntry.TABLE_NAME + "(" + MovieContract.MovieEntry._ID + ")" +
+                        ");";
+
+        /*
         * CREATE TABLE favorite(
         * favorite_id INTEGER PRIMARY KEY AUTOINCREMENT,
         * movie_id INTEGER NOT NULL,

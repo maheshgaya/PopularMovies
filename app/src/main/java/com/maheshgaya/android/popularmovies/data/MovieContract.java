@@ -15,15 +15,29 @@ public class MovieContract {
 
     //URI Parameters Config
     //example: content://com.maheshgaya.android.popularmovies.app/movies
+    //example: content://com.maheshgaya.android.popularmovies.app/movies/_ID
     public static final String PATH_MOVIES = "movies";
+    //example: content://com.maheshgaya.android.popularmovies.app/most_popular
+    //returns all most popular movies
+    public static final String PATH_MOST_POPULAR = "most_popular";
+    //example: content://com.maheshgaya.android.popularmovies.app/top_rated
+    //returns all top rated movies
+    public static final String PATH_TOP_RATED = "top_rated";
+    //example: content://com.maheshgaya.android.popularmovies.app/trailers/movie_id
+    //returns all trailers for a movie queried by movie_id
     public static final String PATH_TRAILERS = "trailers";
+    //example: content://com.maheshgaya.android.popularmovies.app/favorites/movie_id
+    //returns a specific movie that is in the favorite table
     public static final String PATH_FAVORITES = "favorites";
+    //example: content://com.maheshgaya.android.popularmovies.app/reviews/movie_id
+    //returns all movies that has the movie_id
     public static final String PATH_REVIEWS = "reviews";
 
+    //TODO: Remove this unnecessary statement. Will be used inside Movie class
     private static final String IMAGE_PATH_BASE_URL = "http://image.tmdb.org/t/p/w185/";
 
     private MovieContract(){
-        //prevent other classes from accidently defining this class
+        //prevent other classes from accidentally defining this class
     }
 
 
@@ -151,4 +165,69 @@ public class MovieContract {
 
 
     }
+
+    /**
+     * Defines the movies queried by top rated url
+     * This will check if the movie exists in movie table,
+     * if not then it will create a new one then add it here
+     */
+
+    public static final class TopRatedEntry implements BaseColumns{
+
+        //Create content URI
+        public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon()
+                .appendPath(PATH_TOP_RATED).build();
+
+        //Create cursor of base type directory for multiple entries
+        public static final String CONTENT_DIR_TYPE =
+                ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_TOP_RATED;
+        //Create cursor of base type item for single entry
+        public static final String CONTENT_ITEM_TYPE =
+                ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY  + "/" + PATH_TOP_RATED;
+
+        /* DEFINE TABLE*/
+        //TABLE NAME
+        public static final String TABLE_NAME = "top_rated";
+        //COLUMNS
+        public static final String _ID = "top_rated_id";
+        public static final String COLUMN_MOVIE_ID = "movie_id"; //FOREIGN KEY
+
+        //for building URIs on insertion
+        public static  Uri buildTopRatedUri(long id){
+            return ContentUris.withAppendedId(CONTENT_URI, id);
+        }
+    }
+
+    /**
+     * Defines the movies queried by most popular url
+     * This will check if the movie exists in movie table,
+     * if not then it will create a new one then add it here
+     */
+
+    public static final class MostPopularEntry implements BaseColumns{
+
+        //Create content URI
+        public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon()
+                .appendPath(PATH_MOST_POPULAR).build();
+
+        //Create cursor of base type directory for multiple entries
+        public static final String CONTENT_DIR_TYPE =
+                ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_MOST_POPULAR;
+        //Create cursor of base type item for single entry
+        public static final String CONTENT_ITEM_TYPE =
+                ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY  + "/" + PATH_MOST_POPULAR;
+
+        /* DEFINE TABLE*/
+        //TABLE NAME
+        public static final String TABLE_NAME = "most_popular";
+        //COLUMNS
+        public static final String _ID = "most_popular_id";
+        public static final String COLUMN_MOVIE_ID = "movie_id"; //FOREIGN KEY
+
+        //for building URIs on insertion
+        public static  Uri buildMostPopularUri(long id){
+            return ContentUris.withAppendedId(CONTENT_URI, id);
+        }
+    }
+
 }
