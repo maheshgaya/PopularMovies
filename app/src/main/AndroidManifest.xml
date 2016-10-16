@@ -31,8 +31,9 @@
                 android:value=".MainActivity"/>
         </activity>
         <provider
-            android:authorities="com.maheshgaya.android.popularmovies.app"
-            android:name=".data.MovieProvider"/>
+            android:authorities="com.maheshgaya.android.popularmovies.data.MovieProvider"
+            android:name="com.maheshgaya.android.popularmovies.data.generated.MovieProvider"
+            android:exported="false"/>
     </application>
 
 </manifest>

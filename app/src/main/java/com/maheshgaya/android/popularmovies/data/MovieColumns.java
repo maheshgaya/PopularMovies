@@ -19,7 +19,7 @@ public interface MovieColumns {
     public static final String _ID = "_id";
 
     @DataType(DataType.Type.INTEGER) @Unique @NotNull
-    public static final String MOVIE_API_ID = "movie_api_id";
+    public static final String MOVIE_API_ID = "movie_api_id"; //id from API
 
     @DataType(DataType.Type.TEXT) @NotNull
     public static final String TITLE = "title";

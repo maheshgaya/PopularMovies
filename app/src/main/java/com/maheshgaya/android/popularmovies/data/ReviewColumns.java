@@ -20,10 +20,10 @@ public interface ReviewColumns {
     @AutoIncrement
     public static final String _ID = "_id";
 
-    @DataType(DataType.Type.INTEGER) @Unique
+    @DataType(DataType.Type.INTEGER)
     @NotNull
-    @References(table = MovieDatabase.MOVIES, column = MovieColumns.MOVIE_API_ID)
-    public static final String MOVIE_API_ID = "movie_api_id";
+    @References(table = MovieDatabase.MOVIES, column = MovieColumns._ID)
+    public static final String MOVIE_ID = "movie_id";
 
     @DataType(DataType.Type.TEXT) @NotNull
     public static final String REVIEW_URL = "review_url";

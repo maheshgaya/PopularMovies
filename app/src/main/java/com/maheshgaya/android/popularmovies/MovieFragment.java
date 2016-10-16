@@ -219,7 +219,7 @@ public class MovieFragment extends Fragment {
 
             //get the data from TheMovieDB
             try{
-                
+
                 //build url
                 final String MOVIE_POPULAR_BASE_URL = "http://api.themoviedb.org/3/movie/popular?";
                 final String MOVIE_TOP_RATED_BASE_URL = "http://api.themoviedb.org/3/movie/top_rated?";
@@ -360,6 +360,7 @@ public class MovieFragment extends Fragment {
 
                 JSONObject movie = movieArray.getJSONObject(i);
                 //Log.d(TAG, "getMovieDatafromJson: " + movie);
+                int movieId = movie.getInt(Constant.TMDB_ID);
                 String movieTitle = movie.getString(Constant.TMDB_TITLE);
                 //Log.d(TAG, "getMovieDatafromJson: " + movieTitle);
                 String movieThumbnailURL = movie.getString(Constant.TMDB_THUMBNAIL_URL);
@@ -367,7 +368,7 @@ public class MovieFragment extends Fragment {
                 double movieRatings = movie.getDouble(Constant.TMDB_RATINGS);
                 String movieReleaseDate = movie.getString(Constant.TMDB_RELEASE_DATE);
 
-                movies[i] = new Movie(movieTitle, movieThumbnailURL, moviePlot, movieRatings, movieReleaseDate);
+                movies[i] = new Movie(movieId, movieTitle, movieThumbnailURL, moviePlot, movieRatings, movieReleaseDate);
                 //Log.d(TAG, "getMovieDatafromJson: " + mMovies[i]);
             }
             return movies;

@@ -21,6 +21,6 @@ public interface TopRatedColumns {
 
     @DataType(DataType.Type.INTEGER) @Unique
     @NotNull
-    @References(table = MovieDatabase.MOVIES, column = MovieColumns.MOVIE_API_ID)
-    public static final String MOVIE_API_ID = "movie_api_id";
+    @References(table = MovieDatabase.MOVIES, column = MovieColumns._ID)
+    public static final String MOVIE_ID = "movie_id";
 }
