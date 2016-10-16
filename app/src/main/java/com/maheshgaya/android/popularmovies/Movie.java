@@ -36,6 +36,8 @@ public class Movie implements Parcelable{
 
     private static final String BASE_URL = "http://image.tmdb.org/t/p/w185/"; //base url for  getting poster
 
+
+    private String id; //id from Movie DB
     private String title; //original title
     private String thumbnailURL; //movie poster image thumbnail
     private String plot; //A plot synopsis (called overview in the api)
@@ -52,6 +54,7 @@ public class Movie implements Parcelable{
      * @param ratings user ratings of the movie
      * @param releaseDate release date of the movie, format: yyyy-MM-dd
      */
+    //TODO: Add id
     public Movie(String title, String thumbnailURL, String plot,
                  double ratings, String releaseDate){
         this.title = title;
@@ -76,6 +79,22 @@ public class Movie implements Parcelable{
         releaseDate = in.readString();
     }
 
+
+    /**
+     * getId()
+     * @return id
+     */
+    public String getId() {
+        return id;
+    }
+
+    /**
+     * setId
+     * @param id
+     */
+    public void setId(String id) {
+        this.id = id;
+    }
 
     /**
      * getBaseUrl
