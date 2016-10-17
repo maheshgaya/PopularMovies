@@ -50,7 +50,6 @@ public class MovieContract{
             return ContentUris.withAppendedId(CONTENT_URI, id);
         }
 
-
     }
 
     /**
@@ -75,6 +74,16 @@ public class MovieContract{
         //building the paths
         public static Uri buildFavoriteUri(long id){
             return ContentUris.withAppendedId(CONTENT_URI, id);
+        }
+
+        //content://com.maheshgaya.android.popularmovies.app/favorite/movie/[movie_id]
+        public static Uri buildFavoriteMovie(int movie_id){
+            return CONTENT_URI.buildUpon().appendPath(MovieEntry.TABLE_NAME)
+                    .appendPath(Integer.toString(movie_id)).build();
+        }
+
+        public static String getMovieIdFromUri(Uri uri){
+            return uri.getPathSegments().get(1);
         }
 
     }
@@ -153,6 +162,16 @@ public class MovieContract{
         public static Uri buildTrailerUri(long id){
             return ContentUris.withAppendedId(CONTENT_URI, id);
         }
+
+        //content://com.maheshgaya.android.popularmovies.app/trailer/movie/[movie_id]
+        public static Uri buildTrailerMovie(int movie_id){
+            return CONTENT_URI.buildUpon().appendPath(MovieEntry.TABLE_NAME)
+                    .appendPath(Integer.toString(movie_id)).build();
+        }
+
+        public static String getMovieIdFromUri(Uri uri){
+            return uri.getPathSegments().get(1);
+        }
     }
 
     /**
@@ -178,6 +197,16 @@ public class MovieContract{
         //building the paths
         public static Uri buildReviewUri(long id){
             return ContentUris.withAppendedId(CONTENT_URI, id);
+        }
+
+        //content://com.maheshgaya.android.popularmovies.app/review/movie/[movie_id]
+        public static Uri buildReviewMovie(int movie_id){
+            return CONTENT_URI.buildUpon().appendPath(MovieEntry.TABLE_NAME)
+                    .appendPath(Integer.toString(movie_id)).build();
+        }
+
+        public static String getMovieIdFromUri(Uri uri){
+            return uri.getPathSegments().get(1);
         }
     }
 
