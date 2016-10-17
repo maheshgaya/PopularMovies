@@ -50,6 +50,7 @@ public class MovieContract{
             return ContentUris.withAppendedId(CONTENT_URI, id);
         }
 
+
     }
 
     /**
