@@ -575,24 +575,12 @@ public class FetchMovieTask extends AsyncTask<String, Void, Void> {
                 JSONObject reviewJson = new JSONObject(movieReviewJsonStr);
                 JSONArray reviewArray = reviewJson.getJSONArray(Constant.TMDB_REVIEW_RESULTS);
                 if (reviewArray.length() != 0) {
-                    Vector<ContentValues> cVVector = new Vector<ContentValues>(reviewArray.length());
                     for (int i = 0; i < reviewArray.length(); i++) {
                         JSONObject review = reviewArray.getJSONObject(i);
                         String reviewUrl = review.getString(Constant.TMDB_REVIEW_URL);
-                        ContentValues reviewValues = new ContentValues();
-                        reviewValues.put(MovieContract.ReviewEntry.COLUMN_MOVIE_ID, movieId);
-                        reviewValues.put(MovieContract.ReviewEntry.COLUMN_REVIEW_URL, reviewUrl);
-                        cVVector.add(reviewValues);
+                        long reviewId = addReview(movieId, reviewUrl);
                     }
 
-                    int inserted = 0;
-                    //add to database
-                    if (cVVector.size() > 0) {
-                        ContentValues[] cvArray = new ContentValues[cVVector.size()];
-                        cVVector.toArray(cvArray);
-                        inserted = mContext.getContentResolver().bulkInsert(MovieContract.ReviewEntry.CONTENT_URI, cvArray);
-                    }
-                    Log.d(LOG_TAG, "getMovieReviewDataFromJson completed. " + inserted + " Inserted");
 
                 }
             }
@@ -606,7 +594,7 @@ public class FetchMovieTask extends AsyncTask<String, Void, Void> {
         throws JSONException{
         final String YOUTUBE_BASE_URL = "https://www.youtube.com/watch?v=";
 
-        Log.d(LOG_TAG, "getMovieTrailerDataFromJson: " + movieTrailerJsonStr);
+        //Log.d(LOG_TAG, "getMovieTrailerDataFromJson: " + movieTrailerJsonStr);
         try {
             if (movieTrailerJsonStr != null) {
                 JSONObject trailerJson = new JSONObject(movieTrailerJsonStr);
@@ -616,7 +604,7 @@ public class FetchMovieTask extends AsyncTask<String, Void, Void> {
                     for (int i = 0; i < trailerArray.length(); i++) {
                         JSONObject trailer = trailerArray.getJSONObject(i);
                         String trailerUrl = YOUTUBE_BASE_URL + trailer.getString(Constant.TMDB_TRAILER_KEY);
-                        addTrailer(movieId, trailerUrl);
+                        long trailerId = addTrailer(movieId, trailerUrl);
                     }
 
                 }

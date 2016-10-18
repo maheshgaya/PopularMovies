@@ -47,12 +47,12 @@ public class MovieAdapter extends CursorAdapter {
     public void bindView(View view, Context context, Cursor cursor) {
         ViewHolder viewHolder = (ViewHolder) view.getTag();
 
-        String imageUrl = ""; //cursor.getString(); //TODO: To replace with projection
+        String imageUrl = cursor.getString(MovieFragment.COLUMN_MOVIE_IMAGE_URL);
 
         try {
             Picasso
                     .with(context)
-                    .load(R.drawable.ic_photo_placeholder)
+                    .load(imageUrl)
                     .error(R.drawable.ic_photo_placeholder)
                     .into(viewHolder.thumbnailImageView);
             //Log.d(LOG_TAG, "getView: Picasso executed");

@@ -46,7 +46,6 @@ public class Movie implements Parcelable{
      * @param ratings user ratings of the movie
      * @param releaseDate release date of the movie, format: yyyy-MM-dd
      */
-    //TODO: Add id
     public Movie(int id, String title, String thumbnailURL, String plot,
                  double ratings, String releaseDate){
         this.id = id;

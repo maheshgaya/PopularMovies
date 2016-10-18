@@ -111,6 +111,15 @@ public class MovieContract{
         public static Uri buildMostPopularUri(long id){
             return ContentUris.withAppendedId(CONTENT_URI, id);
         }
+
+        //content://com.maheshgaya.android.popularmovies.app/most_popular/movies
+        public static Uri buildMostPopularMovies(){
+            return CONTENT_URI.buildUpon().appendPath(MovieEntry.TABLE_NAME + "s").build();
+        }
+
+        public static String getMostPopularIdFromUri(Uri uri){
+            return uri.getPathSegments().get(1);
+        }
     }
 
     /**
@@ -135,6 +144,15 @@ public class MovieContract{
         //building the paths
         public static Uri buildTopRatedUri(long id){
             return ContentUris.withAppendedId(CONTENT_URI, id);
+        }
+
+        //content://com.maheshgaya.android.popularmovies.app/top_rated/movies
+        public static Uri buildTopRatedMovies(){
+            return CONTENT_URI.buildUpon().appendPath(MovieEntry.TABLE_NAME + "s").build();
+        }
+
+        public static String getTopRatedIdFromUri(Uri uri){
+            return uri.getPathSegments().get(1);
         }
     }
 

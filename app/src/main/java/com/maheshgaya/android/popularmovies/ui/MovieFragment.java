@@ -45,7 +45,29 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
     private static final String TAG = MovieFragment.class.getSimpleName(); //logging purposes
     private MovieAdapter mMovieAdapter; //for managing the gridview
     private GridView mGridView;
-    private Movie[] mMovies = {}; //array of movies
+
+    private static final  String[] MOVIE_COLUMNS_PROJECTION = {
+            MovieContract.MovieEntry.TABLE_NAME + "." + MovieContract.MovieEntry._ID,
+            MovieContract.MovieEntry.COLUMN_MOVIE_API_ID,
+            MovieContract.MovieEntry.COLUMN_TITLE,
+            MovieContract.MovieEntry.COLUMN_IMAGE_URL,
+            MovieContract.MovieEntry.COLUMN_PLOT,
+            MovieContract.MovieEntry.COLUMN_RATINGS,
+            MovieContract.MovieEntry.COLUMN_RELEASE_DATE
+    };
+
+    static final int COLUMN_MOVIE_ID = 0;
+    static final int COLUMN_MOVIE_API_ID = 1;
+    static final int COLUMN_MOVIE_TITLE = 2;
+    static final int COLUMN_MOVIE_IMAGE_URL = 3;
+    static final int COLUMN_MOVIE_PLOT = 4;
+    static final int COLUMN_MOVIE_RATINGS = 5;
+    static final int COLUMN_MOVIE_RELEASE_DATE = 6;
+
+
+
+
+
 
     /**
      * MovieFragment Constructor
@@ -71,7 +93,7 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        outState.putParcelableArray(Constant.INSTANCE_STATE_MOVIES_ARRAY, mMovies);
+        //outState.putParcelableArray(Constant.INSTANCE_STATE_MOVIES_ARRAY, mMovies);
         super.onSaveInstanceState(outState);
     }
 
@@ -142,20 +164,21 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        Uri movieUri = null;
+        Uri movieUri;
         String sortOrder;
         if (Utility.isMostPopular(getActivity())){
             //query most popular
             sortOrder = MovieContract.MostPopularEntry._ID + " ASC";
-            movieUri = MovieContract.MostPopularEntry.CONTENT_URI;
+            movieUri = MovieContract.MostPopularEntry.buildMostPopularMovies();
+
         } else {
             //query top rated
             sortOrder = MovieContract.TopRatedEntry.COLUMN_MOVIE_ID + " ASC";
-            movieUri = MovieContract.TopRatedEntry.CONTENT_URI;
+            movieUri = MovieContract.TopRatedEntry.buildTopRatedMovies();
         }
         return new CursorLoader(getActivity(),
                 movieUri,
-                null,
+                MOVIE_COLUMNS_PROJECTION,
                 null,
                 null,
                 sortOrder);
