@@ -22,7 +22,6 @@ import android.widget.GridView;
 
 import com.maheshgaya.android.popularmovies.Constant;
 import com.maheshgaya.android.popularmovies.data.MovieContract;
-import com.maheshgaya.android.popularmovies.model.Movie;
 import com.maheshgaya.android.popularmovies.R;
 import com.maheshgaya.android.popularmovies.syncdata.FetchMovieTask;
 import com.maheshgaya.android.popularmovies.syncdata.Utility;
@@ -93,7 +92,6 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        //outState.putParcelableArray(Constant.INSTANCE_STATE_MOVIES_ARRAY, mMovies);
         super.onSaveInstanceState(outState);
     }
 
