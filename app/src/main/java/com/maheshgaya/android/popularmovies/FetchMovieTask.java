@@ -33,21 +33,18 @@ import java.net.URL;
  * fetch movie data using async task
  */
 //AsyncTask<params, progress, result>
-public class FetchMovieTask extends AsyncTask<String, Void, Movie[]> {
+public class FetchMovieTask extends AsyncTask<String, Void, Void> {
 
     private final String LOG_TAG = FetchMovieTask.class.getSimpleName(); //logging purposes
-    private MovieAdapter mMovieAdapter;
-    private Movie[] mMovies;
-    private GridView mGridView;
     private Context mContext;
+    private final String BASE_URL = "http://api.themoviedb.org/3/movie/";
+    private final String APPID_PARAM = "api_key";
 
     private static final String POPULAR_MOVIE_RANKING = "popular";
     private static final String TOP_RATED_MOVIE_RANKING = "top_rated";
 
-    public FetchMovieTask(Context context, MovieAdapter movieAdapter, GridView gridView){
+    public FetchMovieTask(Context context){
         this.mContext = context;
-        this.mMovieAdapter = movieAdapter;
-        this.mGridView = gridView;
     }
 
     long addMovie(int movieApiId, String title, String imageUrl, String plot, double ratings, String releaseDate){
@@ -91,6 +88,69 @@ public class FetchMovieTask extends AsyncTask<String, Void, Movie[]> {
         return  movieId;
     }
 
+    long addMovieToMostPopular(int movieId){
+        long mostPopularId;
+        //query table to see if the movie already has a record
+        Cursor mostPopularCursor = mContext.getContentResolver().query(
+                MovieContract.MostPopularEntry.CONTENT_URI,
+                new String[]{MovieContract.MostPopularEntry._ID},
+                MovieContract.MostPopularEntry.COLUMN_MOVIE_ID + " = ? ",
+                new String[]{Integer.toString(movieId)},
+                null
+        );
+        try {
+            if (mostPopularCursor.moveToFirst()){
+                int mostPopularIndex = mostPopularCursor.getColumnIndex(MovieContract.MostPopularEntry._ID);
+                mostPopularId = mostPopularCursor.getLong(mostPopularIndex);
+            } else {
+                ContentValues mostPopularValues = new ContentValues();
+                mostPopularValues.put(MovieContract.MostPopularEntry.COLUMN_MOVIE_ID, movieId);
+                //Then add most popular to database
+                Uri insertUri = mContext.getContentResolver().insert(
+                        MovieContract.MostPopularEntry.CONTENT_URI,
+                        mostPopularValues
+                );
+                mostPopularId = ContentUris.parseId(insertUri);
+            }
+        } finally {
+            mostPopularCursor.close();
+        }
+
+        return mostPopularId;
+    }
+
+    long addMovieToTopRated(int movieId){
+        long topRatedId;
+        //query table to see if the movie already has a record
+        Cursor topRatedCursor = mContext.getContentResolver().query(
+                MovieContract.TopRatedEntry.CONTENT_URI,
+                new String[]{MovieContract.TopRatedEntry._ID},
+                MovieContract.TopRatedEntry.COLUMN_MOVIE_ID + " = ? ",
+                new String[]{Integer.toString(movieId)},
+                null
+        );
+
+        try {
+            if (topRatedCursor.moveToFirst()){
+                int topRatedIndex = topRatedCursor.getColumnIndex(MovieContract.TopRatedEntry._ID);
+                topRatedId = topRatedCursor.getLong(topRatedIndex);
+            } else {
+                ContentValues topRatedValues = new ContentValues();
+                topRatedValues.put(MovieContract.TopRatedEntry.COLUMN_MOVIE_ID, movieId);
+                //Then add top rated to database
+                Uri insertUri = mContext.getContentResolver().insert(
+                        MovieContract.TopRatedEntry.CONTENT_URI,
+                        topRatedValues
+                );
+                topRatedId = ContentUris.parseId(insertUri);
+            }
+        } finally {
+            topRatedCursor.close();
+        }
+        return topRatedId;
+
+    }
+
 
     /**
      * doInBackground
@@ -99,8 +159,8 @@ public class FetchMovieTask extends AsyncTask<String, Void, Movie[]> {
      * will fetch data from The Movie DB API
      */
     @Override
-    protected Movie[] doInBackground(String... params) {
-        Log.d(LOG_TAG, "doInBackground: method executed");
+    protected Void doInBackground(String... params) {
+        //Log.d(LOG_TAG, "doInBackground: method executed");
 
         //check if device is connected to internet
         //      if not just show blank fragment
@@ -128,9 +188,8 @@ public class FetchMovieTask extends AsyncTask<String, Void, Movie[]> {
         try{
 
             //build url
-            final String MOVIE_POPULAR_BASE_URL = "http://api.themoviedb.org/3/movie/popular?";
-            final String MOVIE_TOP_RATED_BASE_URL = "http://api.themoviedb.org/3/movie/top_rated?";
-            final String APPID_PARAM = "api_key";
+            final String MOVIE_POPULAR_BASE_URL = BASE_URL + "popular?";
+            final String MOVIE_TOP_RATED_BASE_URL = BASE_URL + "top_rated?";
 
             String baseUrl = MOVIE_POPULAR_BASE_URL; //default value
 
@@ -174,7 +233,7 @@ public class FetchMovieTask extends AsyncTask<String, Void, Movie[]> {
 
             //if buffer empty, return null
             if (stringBuffer.length() == 0){
-                return  null;
+                return null;
             }
 
             //Getting data is successful
@@ -183,7 +242,7 @@ public class FetchMovieTask extends AsyncTask<String, Void, Movie[]> {
 
         } catch (IOException e){
             Log.e(LOG_TAG, "Error ", e);
-        }finally {
+        } finally {
             //disconnect if cannot make connection
             if (urlConnection != null) {
                 urlConnection.disconnect();
@@ -198,14 +257,13 @@ public class FetchMovieTask extends AsyncTask<String, Void, Movie[]> {
             }
         }
 
-        //return movies as array based on the JSON
         try{
-            return getMovieDatafromJson(movieJsonStr, movieRanking);
-        }catch (JSONException e){
+            getMovieDatafromJson(movieJsonStr, movieRanking);
+        } catch (JSONException e){
             Log.e(LOG_TAG, "doInBackground: ", e );
         }
 
-        return  null; //nothing happened
+        return null; //nothing happened
     }
 
     /**
@@ -218,34 +276,10 @@ public class FetchMovieTask extends AsyncTask<String, Void, Movie[]> {
         return networkInfo != null && networkInfo.isConnectedOrConnecting();
     }
 
-    /**
-     * onPostExecute
-     * @param result
-     * update the adapter and the gridview
-     * based on new data
-     */
-    @Override
-    protected void onPostExecute(Movie[] result) {
-
-        if (result != null) {
-            mMovies = result;
-            try {
-                //Log.d(TAG, "onPostExecute: " + mMovies.length);
-                mMovieAdapter = new MovieAdapter(mContext, result);
-                //Log.d(TAG, "onPostExecute: " + mMovieAdapter.getCount());
-                mMovieAdapter.notifyDataSetChanged();
-                mGridView.setAdapter(mMovieAdapter);
-            } catch (UnsupportedOperationException e) {
-                Log.e(LOG_TAG, "onPostExecute: " + e.getMessage(), e);
-                e.printStackTrace();
-            }
-
-        }
 
 
 
 
-    }
 
     /**
      * getMovieDatafromJson
@@ -254,8 +288,9 @@ public class FetchMovieTask extends AsyncTask<String, Void, Movie[]> {
      * @throws JSONException
      * only get what is needed. Then make an array of movies
      */
-    private Movie[] getMovieDatafromJson(String movieJsonStr, String movieRanking)
+    private void getMovieDatafromJson(String movieJsonStr, String movieRanking)
             throws JSONException{
+        final String BASE_IMAGE_URL = "http://image.tmdb.org/t/p/w185/";
 
         //get the useful information from the JSON
         JSONObject movieJson = new JSONObject(movieJsonStr);
@@ -268,23 +303,156 @@ public class FetchMovieTask extends AsyncTask<String, Void, Movie[]> {
         for (int i = 0; i < movieArray.length(); i++){
 
             JSONObject movie = movieArray.getJSONObject(i);
-            //Log.d(TAG, "getMovieDatafromJson: " + movie);
             int movieApiId = movie.getInt(Constant.TMDB_ID);
             String movieTitle = movie.getString(Constant.TMDB_TITLE);
-            //Log.d(TAG, "getMovieDatafromJson: " + movieTitle);
             String movieThumbnailURL = movie.getString(Constant.TMDB_THUMBNAIL_URL);
+            movieThumbnailURL = BASE_IMAGE_URL + movieThumbnailURL;
             String moviePlot = movie.getString(Constant.TMDB_PLOT);
             double movieRatings = movie.getDouble(Constant.TMDB_RATINGS);
             String movieReleaseDate = movie.getString(Constant.TMDB_RELEASE_DATE);
-            //TODO: Bulk Insert for movies, Top Rated movies, and Most popular movies
+
+            //add movie to movie table
             long movieId = addMovie(movieApiId, movieTitle, movieThumbnailURL, moviePlot, movieRatings, movieReleaseDate);
-            //TODO: Check for movieRanking then add to database
-            //TODO: Show movies based on User's sharedPreferences
-            //TODO: onPostExecute not needed so clean it up and add Database call in MovieFragment using loaders
-            movies[i] = new Movie(movieApiId, movieTitle, movieThumbnailURL, moviePlot, movieRatings, movieReleaseDate);
-            //Log.d(TAG, "getMovieDatafromJson: " + mMovies[i]);
+            //then add to top_rated or most_popular table based on
+
         }
-        return movies;
+    }
+
+    private boolean getMovieReview(int movieApiId){
+        final String MOVIE_REVIEW_URL = BASE_URL + Integer.toString(movieApiId) + "/reviews?";
+        HttpURLConnection urlConnection = null;
+        BufferedReader reader = null;
+        String reviewJsonStr = null;
+
+        try{
+            //build the whole url and parse it
+            Uri builtUri = Uri.parse(MOVIE_REVIEW_URL).buildUpon()
+                    .appendQueryParameter(APPID_PARAM, BuildConfig.THE_MOVIE_DB_API_KEY)
+                    .build();
+            //Make connection to api
+            URL url = new URL(builtUri.toString());
+            //make connection to the api and GET the data
+            urlConnection = (HttpURLConnection) url.openConnection();
+            urlConnection.setRequestMethod("GET");
+            urlConnection.connect();
+
+
+            //read data(input stream) to string
+            InputStream inputStream = urlConnection.getInputStream();
+            StringBuffer stringBuffer = new StringBuffer();
+
+            //if stream empty, return null
+            if (inputStream == null){
+                return false;
+            }
+
+            reader = new BufferedReader(new InputStreamReader(inputStream));
+
+            //read line by line
+            String line;
+            while ((line = reader.readLine()) != null){
+                stringBuffer.append(line + "\n");
+            }
+
+            //if buffer empty, return null
+            if (stringBuffer.length() == 0){
+                return false;
+            }
+
+            //Getting data is successful
+            reviewJsonStr = stringBuffer.toString();
+        } catch (IOException e){
+            Log.e(LOG_TAG, "Error ", e);
+        } finally {
+            //disconnect if cannot make connection
+            if (urlConnection != null) {
+                urlConnection.disconnect();
+            }
+            //close reader if it null
+            if (reader != null) {
+                try {
+                    reader.close();
+                } catch (final IOException e) {
+                    Log.e(LOG_TAG, "Error closing stream", e);
+                }
+            }
+        }
+
+        try {
+          //TODO: read review and add to database in bulk
+        } catch (JSONException e){
+            Log.e(LOG_TAG, "doInBackground: ", e );
+        }
+
+        return true;
+
+    }
+
+    private boolean getMovieTrailer(int movieApiId){
+        final String MOVIE_TRAILER_URL = BASE_URL + Integer.toString(movieApiId) + "/videos?";
+        HttpURLConnection urlConnection = null;
+        BufferedReader reader = null;
+        String trailerJsonStr = null;
+        try{
+            //build the whole url and parse it
+            Uri builtUri = Uri.parse(MOVIE_TRAILER_URL).buildUpon()
+                    .appendQueryParameter(APPID_PARAM, BuildConfig.THE_MOVIE_DB_API_KEY)
+                    .build();
+            //Make connection to api
+            URL url = new URL(builtUri.toString());
+            //make connection to the api and GET the data
+            urlConnection = (HttpURLConnection) url.openConnection();
+            urlConnection.setRequestMethod("GET");
+            urlConnection.connect();
+
+
+            //read data(input stream) to string
+            InputStream inputStream = urlConnection.getInputStream();
+            StringBuffer stringBuffer = new StringBuffer();
+
+            //if stream empty, return null
+            if (inputStream == null){
+                return false;
+            }
+
+            reader = new BufferedReader(new InputStreamReader(inputStream));
+
+            //read line by line
+            String line;
+            while ((line = reader.readLine()) != null){
+                stringBuffer.append(line + "\n");
+            }
+
+            //if buffer empty, return null
+            if (stringBuffer.length() == 0){
+                return false;
+            }
+
+            //Getting data is successful
+            trailerJsonStr = stringBuffer.toString();
+        } catch (IOException e){
+            Log.e(LOG_TAG, "Error ", e);
+        } finally {
+            //disconnect if cannot make connection
+            if (urlConnection != null) {
+                urlConnection.disconnect();
+            }
+            //close reader if it null
+            if (reader != null) {
+                try {
+                    reader.close();
+                } catch (final IOException e) {
+                    Log.e(LOG_TAG, "Error closing stream", e);
+                }
+            }
+        }
+
+        try {
+            //TODO: read trailer and add to database in bulk
+        } catch (JSONException e){
+            Log.e(LOG_TAG, "doInBackground: ", e );
+        }
+        return true;
     }
 
 }

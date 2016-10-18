@@ -38,7 +38,7 @@ public class MovieAdapter extends CursorAdapter {
     public MovieAdapter(Context context, Cursor cursor, int flags){
         super(context, cursor, flags);
     }
-    
+
 
     @Override
     public View newView(Context context, Cursor cursor, ViewGroup parent) {

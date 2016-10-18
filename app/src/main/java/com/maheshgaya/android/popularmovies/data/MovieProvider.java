@@ -593,13 +593,13 @@ public class MovieProvider extends ContentProvider {
         final SQLiteDatabase db = mOpenHelper.getWritableDatabase();
         final int match = sUriMatcher.match(uri);
         switch (match){
-            //Only for movies
-            case MOVIE:{
+            //Only for trailers and reviews
+            case TRAILER:{
                 db.beginTransaction();
                 int returnCount = 0;
                 try {
                     for (ContentValues value : values){
-                        long _id = db.insert(MovieContract.MovieEntry.TABLE_NAME, null, value);
+                        long _id = db.insert(MovieContract.TrailerEntry.TABLE_NAME, null, value);
                         if (_id != -1) {
                             returnCount++;
                         }
@@ -611,29 +611,12 @@ public class MovieProvider extends ContentProvider {
                 getContext().getContentResolver().notifyChange(uri, null);
                 return returnCount;
             }
-            case MOST_POPULAR:{
+            case REVIEW:{
                 db.beginTransaction();
                 int returnCount = 0;
                 try {
                     for (ContentValues value : values){
-                        long _id = db.insert(MovieContract.MostPopularEntry.TABLE_NAME, null, value);
-                        if (_id != -1){
-                            returnCount++;
-                        }
-                        db.setTransactionSuccessful();
-                    }
-                } finally {
-                    db.endTransaction();
-                }
-                getContext().getContentResolver().notifyChange(uri, null);
-                return returnCount;
-            }
-            case TOP_RATED:{
-                db.beginTransaction();
-                int returnCount = 0;
-                try {
-                    for (ContentValues value : values){
-                        long _id = db.insert(MovieContract.TopRatedEntry.TABLE_NAME, null, value);
+                        long _id = db.insert(MovieContract.ReviewEntry.TABLE_NAME, null, value);
                         if (_id != -1){
                             returnCount++;
                         }

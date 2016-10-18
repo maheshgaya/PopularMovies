@@ -3,6 +3,7 @@ package com.maheshgaya.android.popularmovies;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -13,6 +14,8 @@ import android.preference.Preference;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.Loader;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -48,7 +51,7 @@ import java.util.Arrays;
  * Deals with getting data from TheMovieDB in JSON
  * and updating the gridview for showing the posters/thumbnails
  */
-public class MovieFragment extends Fragment {
+public class MovieFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>{
 
     private FetchMovieTask fetchMovieTask;
 
@@ -111,7 +114,7 @@ public class MovieFragment extends Fragment {
     public void updateMovie(){
         //will get movies according to sort preference
         //default is Most Popular (popular)
-        fetchMovieTask = new FetchMovieTask(getActivity(), mMovieAdapter, mGridView);
+        fetchMovieTask = new FetchMovieTask(getActivity());
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
         String sortPref = prefs.getString(getString(R.string.pref_sort_key),
                 getString(R.string.pref_sort_default));
@@ -176,4 +179,18 @@ public class MovieFragment extends Fragment {
         return rootView;
     }
 
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        return null;
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+
+    }
 }
