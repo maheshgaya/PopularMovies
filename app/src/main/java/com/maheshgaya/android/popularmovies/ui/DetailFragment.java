@@ -15,7 +15,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.maheshgaya.android.popularmovies.Constant;
-import com.maheshgaya.android.popularmovies.model.Movie;
+
 import com.maheshgaya.android.popularmovies.R;
 import com.squareup.picasso.Picasso;
 
@@ -58,6 +58,7 @@ public class DetailFragment extends Fragment {
         //get data from intent and populate the views
         if (intent != null){
             if (intent.hasExtra(Constant.EXTRA_MOVIE_PARCELABLE)){
+                /*
                 Movie currentMovie = (Movie)intent.getParcelableExtra(Constant.EXTRA_MOVIE_PARCELABLE);
                 //Log.d(LOG_TAG, "onCreateView: " + currentMovie.toString());
 
@@ -71,7 +72,7 @@ public class DetailFragment extends Fragment {
                 ratingsTextView.setText(currentMovie.getRatings() + "/10");
                 CharSequence year = currentMovie.getReleaseDate().subSequence(0,4);
                 releaseDateTextView.setText(year);
-
+            */
             }
         }
 
