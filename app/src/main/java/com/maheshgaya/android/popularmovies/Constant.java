@@ -18,6 +18,7 @@ public class Constant {
     public final static String INSTANCE_MOVIE_FRAGMENT = "mainFragment";
 
     //names of JSON tags to be extracted
+    //Movies
     public final static String TMDB_RESULTS = "results";
     public final static String TMDB_ID = "id";
     public final static String TMDB_TITLE = "original_title";
@@ -25,5 +26,14 @@ public class Constant {
     public final static String TMDB_PLOT = "overview";
     public final static String TMDB_RATINGS = "vote_average";
     public final static String TMDB_RELEASE_DATE = "release_date";
+
+    //Trailers
+    public final static String TMDB_TRAILER_RESULTS = "results";
+    public final static String TMDB_TRAILER_KEY = "key";
+
+    //Reviews
+    public final static String TMDB_REVIEW_RESULTS = "results";
+    public final static String TMDB_REVIEW_URL = "url";
+
 
 }

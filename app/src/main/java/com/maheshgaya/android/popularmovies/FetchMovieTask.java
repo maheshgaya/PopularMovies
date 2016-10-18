@@ -27,6 +27,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Vector;
 
 /**
  * FetchMovieTask
@@ -46,6 +47,21 @@ public class FetchMovieTask extends AsyncTask<String, Void, Void> {
     public FetchMovieTask(Context context){
         this.mContext = context;
     }
+
+    /*******************
+     * Add to Database
+     *******************/
+
+    /**
+     * long addMovie
+     * @param movieApiId
+     * @param title
+     * @param imageUrl
+     * @param plot
+     * @param ratings
+     * @param releaseDate
+     * @return movieId
+     */
 
     long addMovie(int movieApiId, String title, String imageUrl, String plot, double ratings, String releaseDate){
         long movieId;
@@ -88,14 +104,19 @@ public class FetchMovieTask extends AsyncTask<String, Void, Void> {
         return  movieId;
     }
 
-    long addMovieToMostPopular(int movieId){
+    /**
+     * long addMovieToMostPopular
+     * @param movieId
+     * @return mostPopularId
+     */
+    long addMovieToMostPopular(long movieId){
         long mostPopularId;
         //query table to see if the movie already has a record
         Cursor mostPopularCursor = mContext.getContentResolver().query(
                 MovieContract.MostPopularEntry.CONTENT_URI,
                 new String[]{MovieContract.MostPopularEntry._ID},
                 MovieContract.MostPopularEntry.COLUMN_MOVIE_ID + " = ? ",
-                new String[]{Integer.toString(movieId)},
+                new String[]{Long.toString(movieId)},
                 null
         );
         try {
@@ -119,14 +140,19 @@ public class FetchMovieTask extends AsyncTask<String, Void, Void> {
         return mostPopularId;
     }
 
-    long addMovieToTopRated(int movieId){
+    /**
+     * long addMovieToTopRated
+     * @param movieId
+     * @return topRatedId
+     */
+    long addMovieToTopRated(long movieId){
         long topRatedId;
         //query table to see if the movie already has a record
         Cursor topRatedCursor = mContext.getContentResolver().query(
                 MovieContract.TopRatedEntry.CONTENT_URI,
                 new String[]{MovieContract.TopRatedEntry._ID},
                 MovieContract.TopRatedEntry.COLUMN_MOVIE_ID + " = ? ",
-                new String[]{Integer.toString(movieId)},
+                new String[]{Long.toString(movieId)},
                 null
         );
 
@@ -151,6 +177,10 @@ public class FetchMovieTask extends AsyncTask<String, Void, Void> {
 
     }
 
+    /************************
+     * DO IT IN BACKGROUND
+     * Http Connections
+     ************************/
 
     /**
      * doInBackground
@@ -266,59 +296,13 @@ public class FetchMovieTask extends AsyncTask<String, Void, Void> {
         return null; //nothing happened
     }
 
-    /**
-     * isOnline
-     * @return internet connectivity status of device
-     */
-    public boolean isOnline(){
-        ConnectivityManager connectivityManager = (ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
-        return networkInfo != null && networkInfo.isConnectedOrConnecting();
-    }
-
-
-
-
-
 
     /**
-     * getMovieDatafromJson
-     * @param movieJsonStr
-     * @return movies as array
-     * @throws JSONException
-     * only get what is needed. Then make an array of movies
+     * boolean getMovieReview
+     * @param movieApiId
+     * @return status
      */
-    private void getMovieDatafromJson(String movieJsonStr, String movieRanking)
-            throws JSONException{
-        final String BASE_IMAGE_URL = "http://image.tmdb.org/t/p/w185/";
-
-        //get the useful information from the JSON
-        JSONObject movieJson = new JSONObject(movieJsonStr);
-        JSONArray movieArray = movieJson.getJSONArray(Constant.TMDB_RESULTS);
-        //Log.d(TAG, "getMovieDatafromJson: " + movieArray.toString());
-
-        //create an array of all the movies from the JSON
-        Movie[] movies = new Movie[movieArray.length()];
-
-        for (int i = 0; i < movieArray.length(); i++){
-
-            JSONObject movie = movieArray.getJSONObject(i);
-            int movieApiId = movie.getInt(Constant.TMDB_ID);
-            String movieTitle = movie.getString(Constant.TMDB_TITLE);
-            String movieThumbnailURL = movie.getString(Constant.TMDB_THUMBNAIL_URL);
-            movieThumbnailURL = BASE_IMAGE_URL + movieThumbnailURL;
-            String moviePlot = movie.getString(Constant.TMDB_PLOT);
-            double movieRatings = movie.getDouble(Constant.TMDB_RATINGS);
-            String movieReleaseDate = movie.getString(Constant.TMDB_RELEASE_DATE);
-
-            //add movie to movie table
-            long movieId = addMovie(movieApiId, movieTitle, movieThumbnailURL, moviePlot, movieRatings, movieReleaseDate);
-            //then add to top_rated or most_popular table based on
-
-        }
-    }
-
-    private boolean getMovieReview(int movieApiId){
+    private boolean getMovieReview(int movieApiId, long movieId){
         final String MOVIE_REVIEW_URL = BASE_URL + Integer.toString(movieApiId) + "/reviews?";
         HttpURLConnection urlConnection = null;
         BufferedReader reader = null;
@@ -379,7 +363,7 @@ public class FetchMovieTask extends AsyncTask<String, Void, Void> {
         }
 
         try {
-          //TODO: read review and add to database in bulk
+            getMovieReviewDataFromJson(reviewJsonStr, movieId);
         } catch (JSONException e){
             Log.e(LOG_TAG, "doInBackground: ", e );
         }
@@ -388,7 +372,12 @@ public class FetchMovieTask extends AsyncTask<String, Void, Void> {
 
     }
 
-    private boolean getMovieTrailer(int movieApiId){
+    /**
+     * boolean getMovieTrailer
+     * @param movieApiId
+     * @return status
+     */
+    private boolean getMovieTrailer(int movieApiId, long movieId){
         final String MOVIE_TRAILER_URL = BASE_URL + Integer.toString(movieApiId) + "/videos?";
         HttpURLConnection urlConnection = null;
         BufferedReader reader = null;
@@ -448,11 +437,136 @@ public class FetchMovieTask extends AsyncTask<String, Void, Void> {
         }
 
         try {
-            //TODO: read trailer and add to database in bulk
+            getMovieTrailerDataFromJson(trailerJsonStr, movieId);
         } catch (JSONException e){
             Log.e(LOG_TAG, "doInBackground: ", e );
         }
         return true;
     }
+
+    /**
+     * isOnline
+     * @return internet connectivity status of device
+     */
+    public boolean isOnline(){
+        ConnectivityManager connectivityManager = (ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+        return networkInfo != null && networkInfo.isConnectedOrConnecting();
+    }
+
+
+    /************************
+     * Read from Json data
+     ************************/
+
+
+    /**
+     * getMovieDatafromJson
+     * @param movieJsonStr
+     * @return movies as array
+     * @throws JSONException
+     * only get what is needed. Then make an array of movies
+     */
+    private void getMovieDatafromJson(String movieJsonStr, String movieRanking)
+            throws JSONException{
+        final String BASE_IMAGE_URL = "http://image.tmdb.org/t/p/w185/";
+
+        //get the useful information from the JSON
+        JSONObject movieJson = new JSONObject(movieJsonStr);
+        JSONArray movieArray = movieJson.getJSONArray(Constant.TMDB_RESULTS);
+        //Log.d(TAG, "getMovieDatafromJson: " + movieArray.toString());
+
+        for (int i = 0; i < movieArray.length(); i++){
+
+            JSONObject movie = movieArray.getJSONObject(i);
+            int movieApiId = movie.getInt(Constant.TMDB_ID);
+            String movieTitle = movie.getString(Constant.TMDB_TITLE);
+            String movieThumbnailURL = BASE_IMAGE_URL + movie.getString(Constant.TMDB_THUMBNAIL_URL);
+            String moviePlot = movie.getString(Constant.TMDB_PLOT);
+            double movieRatings = movie.getDouble(Constant.TMDB_RATINGS);
+            String movieReleaseDate = movie.getString(Constant.TMDB_RELEASE_DATE);
+
+            //add movie to movie table
+            long movieId = addMovie(movieApiId, movieTitle, movieThumbnailURL, moviePlot, movieRatings, movieReleaseDate);
+            if (movieRanking.equals(POPULAR_MOVIE_RANKING)){
+                long mostPopularMovieId = addMovieToMostPopular(movieId);
+            } else {
+                long topRatedMovieId = addMovieToTopRated(movieId);
+            }
+            //then search for reviews and trailers
+            getMovieReview(movieApiId, movieId);
+            getMovieTrailer(movieApiId, movieId);
+
+        }
+    }
+
+    private void getMovieReviewDataFromJson(String movieReviewJsonStr, long movieId)
+        throws JSONException{
+        try {
+            JSONObject reviewJson = new JSONObject(movieReviewJsonStr);
+            JSONArray reviewArray = reviewJson.getJSONArray(Constant.TMDB_REVIEW_RESULTS);
+            if (reviewArray.length() != 0) {
+                Vector<ContentValues> cVVector = new Vector<ContentValues>(reviewArray.length());
+                for (int i = 0; i < reviewArray.length(); i++) {
+                    JSONObject review = reviewArray.getJSONObject(i);
+                    String reviewUrl = review.getString(Constant.TMDB_REVIEW_URL);
+                    ContentValues reviewValues = new ContentValues();
+                    reviewValues.put(MovieContract.ReviewEntry.COLUMN_MOVIE_ID, movieId);
+                    reviewValues.put(MovieContract.ReviewEntry.COLUMN_REVIEW_URL, reviewUrl);
+                    cVVector.add(reviewValues);
+                }
+
+                int inserted = 0;
+                //add to database
+                if (cVVector.size() > 0) {
+                    ContentValues[] cvArray = new ContentValues[cVVector.size()];
+                    cVVector.toArray(cvArray);
+                    inserted = mContext.getContentResolver().bulkInsert(MovieContract.ReviewEntry.CONTENT_URI, cvArray);
+                }
+                Log.d(LOG_TAG, "getMovieReviewDataFromJson completed. " + inserted + " Inserted");
+
+            }
+        } catch (JSONException e) {
+            Log.e(LOG_TAG, e.getMessage(), e);
+            e.printStackTrace();
+        }
+    }
+
+    private void getMovieTrailerDataFromJson(String movieTrailerJsonStr, long movieId)
+        throws JSONException{
+        final String YOUTUBE_BASE_URL = "https://www.youtube.com/watch?v=";
+
+        try {
+            JSONObject trailerJson = new JSONObject(movieTrailerJsonStr);
+            JSONArray trailerArray = trailerJson.getJSONArray(Constant.TMDB_TRAILER_RESULTS);
+
+            if (trailerArray.length() != 0){
+                Vector<ContentValues> cVVector = new Vector<ContentValues>(trailerArray.length());
+                for (int i = 0; i < trailerArray.length(); i++){
+                    JSONObject trailer = trailerArray.getJSONObject(i);
+                    String trailerUrl = BASE_URL + trailer.getString(Constant.TMDB_TRAILER_KEY);
+                    ContentValues reviewValues = new ContentValues();
+                    reviewValues.put(MovieContract.TrailerEntry.COLUMN_MOVIE_ID, movieId);
+                    reviewValues.put(MovieContract.TrailerEntry.COLUMN_TRAILER_URL, trailerUrl);
+                    cVVector.add(reviewValues);
+                }
+                int inserted = 0;
+                //add to database
+                if (cVVector.size() > 0) {
+                    ContentValues[] cvArray = new ContentValues[cVVector.size()];
+                    cVVector.toArray(cvArray);
+                    inserted = mContext.getContentResolver().bulkInsert(MovieContract.TrailerEntry.CONTENT_URI, cvArray);
+                }
+                Log.d(LOG_TAG, "getMovieReviewDataFromJson completed. " + inserted + " Inserted");
+
+            }
+        } catch (JSONException e) {
+            Log.e(LOG_TAG, e.getMessage(), e);
+            e.printStackTrace();
+        }
+
+
+    }
+
 
 }
