@@ -11,8 +11,6 @@ import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.support.annotation.Nullable;
 
-import com.maheshgaya.android.popularmovies.Movie;
-
 /**
  * Created by Mahesh Gaya on 10/15/16.
  */
@@ -319,11 +317,27 @@ public class MovieProvider extends ContentProvider {
                 break;
             }
             case MOST_POPULAR:{
-                retCursor = getMostPopularMovies(uri, projection, selection, selectionArgs, sortOrder);
+                retCursor = mOpenHelper.getReadableDatabase().query(
+                        MovieContract.MostPopularEntry.TABLE_NAME,
+                        projection,
+                        selection,
+                        selectionArgs,
+                        null,
+                        null,
+                        sortOrder
+                );
                 break;
             }
             case TOP_RATED:{
-                retCursor = getTopRatedMovies(uri, projection, selection, selectionArgs, sortOrder);
+                retCursor = mOpenHelper.getReadableDatabase().query(
+                        MovieContract.TopRatedEntry.TABLE_NAME,
+                        projection,
+                        selection,
+                        selectionArgs,
+                        null,
+                        null,
+                        sortOrder
+                );
                 break;
             }
             case REVIEW:{
@@ -590,40 +604,23 @@ public class MovieProvider extends ContentProvider {
 
     @Override
     public int bulkInsert(Uri uri, ContentValues[] values) {
-        final SQLiteDatabase db = mOpenHelper.getWritableDatabase();
         final int match = sUriMatcher.match(uri);
         switch (match){
             //Only for trailers and reviews
-            case TRAILER:{
-                db.beginTransaction();
-                int returnCount = 0;
-                try {
-                    for (ContentValues value : values){
-                        long _id = db.insert(MovieContract.TrailerEntry.TABLE_NAME, null, value);
-                        if (_id != -1) {
-                            returnCount++;
-                        }
-                        db.setTransactionSuccessful();
-                    }
-                } finally {
-                    db.endTransaction();
-                }
-                getContext().getContentResolver().notifyChange(uri, null);
-                return returnCount;
-            }
             case REVIEW:{
-                db.beginTransaction();
+                final SQLiteDatabase reviewDb = mOpenHelper.getWritableDatabase();
+                reviewDb.beginTransaction();
                 int returnCount = 0;
                 try {
                     for (ContentValues value : values){
-                        long _id = db.insert(MovieContract.ReviewEntry.TABLE_NAME, null, value);
+                        long _id = reviewDb.insert(MovieContract.ReviewEntry.TABLE_NAME, null, value);
                         if (_id != -1){
                             returnCount++;
                         }
-                        db.setTransactionSuccessful();
+                        //reviewDb.setTransactionSuccessful(); //TODO: GETTING AN ERROR ON THIS
                     }
                 } finally {
-                    db.endTransaction();
+                    reviewDb.endTransaction();
                 }
                 getContext().getContentResolver().notifyChange(uri, null);
                 return returnCount;

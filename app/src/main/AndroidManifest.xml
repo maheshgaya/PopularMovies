@@ -11,28 +11,28 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <activity android:name=".MainActivity">
+        <activity android:name=".ui.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".DetailActivity"
-            android:parentActivityName=".MainActivity">
+        <activity android:name=".ui.DetailActivity"
+            android:parentActivityName=".ui.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity"/>
+                android:value=".ui.MainActivity"/>
         </activity>
-        <activity android:name=".SettingsActivity"
-            android:parentActivityName=".MainActivity">
+        <activity android:name=".ui.SettingsActivity"
+            android:parentActivityName=".ui.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity"/>
+                android:value=".ui.MainActivity"/>
         </activity>
         <provider
             android:authorities="com.maheshgaya.android.popularmovies.app"
-            android:name="data.MovieProvider" />
+            android:name=".data.MovieProvider" />
     </application>
 
 </manifest>

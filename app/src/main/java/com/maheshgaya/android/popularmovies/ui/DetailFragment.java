@@ -1,4 +1,4 @@
-package com.maheshgaya.android.popularmovies;
+package com.maheshgaya.android.popularmovies.ui;
 
 /**
  * Created by Mahesh Gaya on 10/6/16.
@@ -14,6 +14,9 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.maheshgaya.android.popularmovies.Constant;
+import com.maheshgaya.android.popularmovies.model.Movie;
+import com.maheshgaya.android.popularmovies.R;
 import com.squareup.picasso.Picasso;
 
 /**

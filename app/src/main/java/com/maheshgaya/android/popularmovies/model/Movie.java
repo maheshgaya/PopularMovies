@@ -1,16 +1,7 @@
-package com.maheshgaya.android.popularmovies;
+package com.maheshgaya.android.popularmovies.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.util.Log;
-
-import java.io.Serializable;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
 
 /**
  * Copyright (c) Mahesh Gaya

@@ -1,27 +1,13 @@
-package com.maheshgaya.android.popularmovies;
+package com.maheshgaya.android.popularmovies.ui;
 
 import android.content.Intent;
-import android.icu.text.DateFormat;
-import android.icu.text.RelativeDateTimeFormatter;
-import android.icu.text.SimpleDateFormat;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
 
-import com.squareup.picasso.Picasso;
-
-import java.text.ParseException;
-import java.util.Date;
-import java.util.Locale;
+import com.maheshgaya.android.popularmovies.R;
 
 
 /**

@@ -1,21 +1,16 @@
-package com.maheshgaya.android.popularmovies;
+package com.maheshgaya.android.popularmovies.ui;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.graphics.Point;
 import android.util.Log;
-import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
-import android.widget.ArrayAdapter;
 import android.widget.CursorAdapter;
 import android.widget.ImageView;
 
+import com.maheshgaya.android.popularmovies.R;
 import com.squareup.picasso.Picasso;
-
-import java.util.Arrays;
 
 /**
  * Copyright (c) Mahesh Gaya
@@ -57,7 +52,7 @@ public class MovieAdapter extends CursorAdapter {
         try {
             Picasso
                     .with(context)
-                    .load(imageUrl)
+                    .load(R.drawable.ic_photo_placeholder)
                     .error(R.drawable.ic_photo_placeholder)
                     .into(viewHolder.thumbnailImageView);
             //Log.d(LOG_TAG, "getView: Picasso executed");

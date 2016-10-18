@@ -1,4 +1,4 @@
-package com.maheshgaya.android.popularmovies;
+package com.maheshgaya.android.popularmovies.ui;
 
 import android.content.res.Configuration;
 import android.os.Bundle;
