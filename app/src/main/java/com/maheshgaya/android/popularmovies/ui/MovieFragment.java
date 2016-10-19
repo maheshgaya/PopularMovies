@@ -153,6 +153,20 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
         // Get a reference to the GridView, and attach this adapter to it.
         mGridView = (GridView) rootView.findViewById(R.id.gridview_movie);
         mGridView.setAdapter(mMovieAdapter);
+        mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+                Cursor cursor = (Cursor)adapterView.getItemAtPosition(position);
+                Log.d(TAG, "onItemClick: " + cursor.getInt(cursor.getColumnIndex(MovieContract.MovieEntry._ID)));
+                Log.d(TAG, "onItemClick: " + position);
+                if (cursor != null){
+                    Intent intent = new Intent(getActivity(), DetailActivity.class)
+                            .setData(MovieContract.MovieEntry
+                                    .buildMovieUri(cursor.getInt(cursor.getColumnIndex(MovieContract.MovieEntry._ID))));
+                    startActivity(intent);
+                }
+            }
+        });
 
 
 

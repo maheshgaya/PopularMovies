@@ -8,9 +8,13 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.Loader;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CursorAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -24,8 +28,9 @@ import com.squareup.picasso.Picasso;
  * Deals with showing the information about the movie on a fragment
  * */
 
-public class DetailFragment extends Fragment {
+public class DetailFragment extends Fragment  implements LoaderManager.LoaderCallbacks{
     private static final String LOG_TAG = DetailFragment.class.getSimpleName();
+    private String mMovieStr;
 
     //these will make the connection to fragment_detail.xml
     TextView titleTextView;
@@ -57,8 +62,12 @@ public class DetailFragment extends Fragment {
 
         //get data from intent and populate the views
         if (intent != null){
+            mMovieStr = intent.getDataString();
+            Log.d(LOG_TAG, "onCreateView: " + mMovieStr);
+
+            /*
             if (intent.hasExtra(Constant.EXTRA_MOVIE_PARCELABLE)){
-                /*
+
                 Movie currentMovie = (Movie)intent.getParcelableExtra(Constant.EXTRA_MOVIE_PARCELABLE);
                 //Log.d(LOG_TAG, "onCreateView: " + currentMovie.toString());
 
@@ -72,10 +81,26 @@ public class DetailFragment extends Fragment {
                 ratingsTextView.setText(currentMovie.getRatings() + "/10");
                 CharSequence year = currentMovie.getReleaseDate().subSequence(0,4);
                 releaseDateTextView.setText(year);
-            */
+
             }
+            */
         }
 
         return rootView;
+    }
+
+    @Override
+    public Loader onCreateLoader(int id, Bundle args) {
+        return null;
+    }
+
+    @Override
+    public void onLoadFinished(Loader loader, Object data) {
+
+    }
+
+    @Override
+    public void onLoaderReset(Loader loader) {
+
     }
 }
