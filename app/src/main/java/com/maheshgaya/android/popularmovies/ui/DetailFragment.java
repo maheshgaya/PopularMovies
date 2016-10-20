@@ -5,12 +5,10 @@ package com.maheshgaya.android.popularmovies.ui;
  */
 
 import android.content.Intent;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
-import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -23,7 +21,6 @@ import android.widget.TextView;
 import com.maheshgaya.android.popularmovies.Constant;
 
 import com.maheshgaya.android.popularmovies.R;
-import com.maheshgaya.android.popularmovies.data.MovieContract;
 import com.squareup.picasso.Picasso;
 
 /**
@@ -31,10 +28,9 @@ import com.squareup.picasso.Picasso;
  * Deals with showing the information about the movie on a fragment
  * */
 
-public class DetailFragment extends Fragment  implements LoaderManager.LoaderCallbacks<Cursor>{
+public class DetailFragment extends Fragment  implements LoaderManager.LoaderCallbacks{
     private static final String LOG_TAG = DetailFragment.class.getSimpleName();
     private String mMovieStr;
-    private static final int DETAIL_LOADER = 0;
 
     //these will make the connection to fragment_detail.xml
     TextView titleTextView;
@@ -42,26 +38,6 @@ public class DetailFragment extends Fragment  implements LoaderManager.LoaderCal
     TextView releaseDateTextView;
     TextView plotTextView;
     TextView ratingsTextView;
-
-    //Projection
-    private static final  String[] MOVIE_COLUMNS_PROJECTION = {
-            MovieContract.MovieEntry.TABLE_NAME + "." + MovieContract.MovieEntry._ID,
-            MovieContract.MovieEntry.COLUMN_MOVIE_API_ID,
-            MovieContract.MovieEntry.COLUMN_TITLE,
-            MovieContract.MovieEntry.COLUMN_IMAGE_URL,
-            MovieContract.MovieEntry.COLUMN_PLOT,
-            MovieContract.MovieEntry.COLUMN_RATINGS,
-            MovieContract.MovieEntry.COLUMN_RELEASE_DATE
-    };
-
-    static final int COLUMN_MOVIE_ID = 0;
-    static final int COLUMN_MOVIE_API_ID = 1;
-    static final int COLUMN_MOVIE_TITLE = 2;
-    static final int COLUMN_MOVIE_IMAGE_URL = 3;
-    static final int COLUMN_MOVIE_PLOT = 4;
-    static final int COLUMN_MOVIE_RATINGS = 5;
-    static final int COLUMN_MOVIE_RELEASE_DATE = 6;
-
 
     /**
      * onCreateView
@@ -88,7 +64,26 @@ public class DetailFragment extends Fragment  implements LoaderManager.LoaderCal
         if (intent != null){
             mMovieStr = intent.getDataString();
             Log.d(LOG_TAG, "onCreateView: " + mMovieStr);
-            
+
+            /*
+            if (intent.hasExtra(Constant.EXTRA_MOVIE_PARCELABLE)){
+
+                Movie currentMovie = (Movie)intent.getParcelableExtra(Constant.EXTRA_MOVIE_PARCELABLE);
+                //Log.d(LOG_TAG, "onCreateView: " + currentMovie.toString());
+
+                titleTextView.setText(currentMovie.getTitle());
+                Picasso
+                        .with(getContext())
+                        .load(currentMovie.getThumbnailURL())
+                        .error(R.drawable.ic_photo_placeholder)
+                        .into(thumbnailImageView);
+                plotTextView.setText(currentMovie.getPlot());
+                ratingsTextView.setText(currentMovie.getRatings() + "/10");
+                CharSequence year = currentMovie.getReleaseDate().subSequence(0,4);
+                releaseDateTextView.setText(year);
+
+            }
+            */
         }
 
         return rootView;
@@ -96,58 +91,13 @@ public class DetailFragment extends Fragment  implements LoaderManager.LoaderCal
 
     @Override
     public Loader onCreateLoader(int id, Bundle args) {
-        Intent intent = getActivity().getIntent();
-        if (intent == null){
-            return null;
-        }
-        return new CursorLoader(
-                getActivity(),
-                intent.getData(),
-                MOVIE_COLUMNS_PROJECTION,
-                null,
-                null,
-                null
-        );
+        return null;
     }
 
     @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        getLoaderManager().initLoader(DETAIL_LOADER, null, this);
-        super.onActivityCreated(savedInstanceState);
+    public void onLoadFinished(Loader loader, Object data) {
+
     }
-
-    @Override
-    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        if (data != null && data.moveToFirst()){
-            //set title
-            String title = data.getString(COLUMN_MOVIE_TITLE);
-            titleTextView.setText(title);
-
-            //image
-            String imageUrl = data.getString(COLUMN_MOVIE_IMAGE_URL);
-            Picasso
-                    .with(getContext())
-                    .load(imageUrl)
-                    .error(R.drawable.ic_photo_placeholder)
-                    .into(thumbnailImageView);
-
-            //plot
-            String plot = data.getString(COLUMN_MOVIE_PLOT);
-            plotTextView.setText(plot);
-
-            //ratings
-            double ratings = data.getDouble(COLUMN_MOVIE_RATINGS);
-            String ratingsStr = ratings + "/10";
-            ratingsTextView.setText(ratingsStr);
-
-            //ReleaseDate
-            String releaseDate = data.getString(COLUMN_MOVIE_RELEASE_DATE);
-            CharSequence year = releaseDate.subSequence(0,4); //get year only
-            releaseDateTextView.setText(year);
-
-        }
-    }
-
 
     @Override
     public void onLoaderReset(Loader loader) {
