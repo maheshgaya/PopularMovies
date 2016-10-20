@@ -6,10 +6,5 @@
 .DS_Store
 /build
 /captures
-<<<<<<< HEAD
 *.bin
 
-
-
-=======
->>>>>>> parent of 9cc103b... chore: added bin files ignore
