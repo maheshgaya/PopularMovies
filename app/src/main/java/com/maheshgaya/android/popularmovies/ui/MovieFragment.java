@@ -41,6 +41,7 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
     private static final int MOVIE_LOADER = 0;
     private FetchMovieTask fetchMovieTask;
 
+
     private static final String TAG = MovieFragment.class.getSimpleName(); //logging purposes
     private MovieAdapter mMovieAdapter; //for managing the gridview
     private GridView mGridView;
@@ -76,6 +77,9 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
         //empty constructor
     }
 
+    public void onSortPrefChanged(){
+        getLoaderManager().restartLoader(MOVIE_LOADER, null, this);
+    }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
@@ -123,17 +127,6 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
 
 
     /**
-     * onStart
-     * upon start fragment get data from TheMovieDB and update the gridview
-     */
-    @Override
-    public void onStart() {
-        super.onStart();
-        updateMovie();
-
-    }
-
-    /**
      * onCreateView
      * @param inflater
      * @param container
@@ -157,8 +150,6 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
                 Cursor cursor = (Cursor)adapterView.getItemAtPosition(position);
-                Log.d(TAG, "onItemClick: " + cursor.getInt(cursor.getColumnIndex(MovieContract.MovieEntry._ID)));
-                Log.d(TAG, "onItemClick: " + position);
                 if (cursor != null){
                     Intent intent = new Intent(getActivity(), DetailActivity.class)
                             .setData(MovieContract.MovieEntry
@@ -178,15 +169,21 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         Uri movieUri;
         String sortOrder;
-        if (Utility.isMostPopular(getActivity())){
+        if (Utility.getSortPreference(getContext())
+                .equals(getContext().getResources().getString(R.string.pref_popular))
+                ){
             //query most popular
-            sortOrder = MovieContract.MostPopularEntry._ID + " ASC";
+            sortOrder = MovieContract.MostPopularEntry.TABLE_NAME + "." +
+                    MovieContract.MostPopularEntry._ID + " ASC";
             movieUri = MovieContract.MostPopularEntry.buildMostPopularMovies();
+            //Log.d(TAG, "onCreateLoader: Most Popular: " + movieUri );
 
         } else {
             //query top rated
-            sortOrder = MovieContract.TopRatedEntry.COLUMN_MOVIE_ID + " ASC";
+            sortOrder = MovieContract.TopRatedEntry.TABLE_NAME + "." +
+                    MovieContract.TopRatedEntry.COLUMN_MOVIE_ID + " ASC";
             movieUri = MovieContract.TopRatedEntry.buildTopRatedMovies();
+            //Log.d(TAG, "onCreateLoader: Top Rated: " + movieUri );
         }
         return new CursorLoader(getActivity(),
                 movieUri,

@@ -87,7 +87,7 @@ public class DetailFragment extends Fragment  implements LoaderManager.LoaderCal
         //get data from intent and populate the views
         if (intent != null){
             mMovieStr = intent.getDataString();
-            Log.d(LOG_TAG, "onCreateView: " + mMovieStr);
+            //Log.d(LOG_TAG, "onCreateView: " + mMovieStr);
 
         }
 

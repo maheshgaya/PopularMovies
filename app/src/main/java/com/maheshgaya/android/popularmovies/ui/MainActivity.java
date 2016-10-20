@@ -1,14 +1,17 @@
 package com.maheshgaya.android.popularmovies.ui;
 
 import android.content.Intent;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.maheshgaya.android.popularmovies.R;
+import com.maheshgaya.android.popularmovies.syncdata.Utility;
 
 /**
  * Copyright (c) Mahesh Gaya
@@ -21,8 +24,9 @@ import com.maheshgaya.android.popularmovies.R;
  * Deals with showing the posters in grid view format (2 columns)
  * */
 public class MainActivity extends AppCompatActivity{
-    private final String TAG_MOVIE_FRAGMENT = "movie_fragment";
+    private final String MOVIE_FRAGMENT_TAG = "MTAG";
     private final String TAG = MainActivity.class.getSimpleName();
+    private String mSortPref;
     Fragment mFragment;
 
     /**
@@ -38,19 +42,30 @@ public class MainActivity extends AppCompatActivity{
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        mSortPref = Utility.getSortPreference(this); //initialize sort Preference
         FragmentManager fragmentManager = new MainActivity().getSupportFragmentManager();
-        mFragment = (MovieFragment)fragmentManager.findFragmentByTag(TAG_MOVIE_FRAGMENT);
+        mFragment = fragmentManager.findFragmentByTag(MOVIE_FRAGMENT_TAG);
 
-        if (mFragment == null) {
-            //Log.d(TAG, "onCreate: savedInstanceState is null");
+        if (savedInstanceState == null) {
             mFragment = new MovieFragment();
              getSupportFragmentManager()
                      .beginTransaction()
-                    .add(R.id.container_main, mFragment)
+                    .add(R.id.container_main, mFragment, MOVIE_FRAGMENT_TAG)
                     .commit();
         }
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        String sortPref = Utility.getSortPreference(this);
+        //Log.d(TAG, "onResume: " + sortPref);
+        if (sortPref != null && !sortPref.equals(mSortPref)){
+            MovieFragment mf = (MovieFragment)getSupportFragmentManager().findFragmentByTag(MOVIE_FRAGMENT_TAG);
+            mf.onSortPrefChanged();
+            mSortPref = sortPref;
+        }
+    }
 
     /**
      * onCreateOptionsMenu
@@ -85,6 +100,10 @@ public class MainActivity extends AppCompatActivity{
             Intent settingsIntent = new Intent(this.getApplicationContext(), SettingsActivity.class);
             startActivity(settingsIntent);
             return true;
+        }
+        if (id == R.id.action_refresh){
+            MovieFragment mf = (MovieFragment)getSupportFragmentManager().findFragmentByTag(MOVIE_FRAGMENT_TAG);
+            mf.updateMovie();
         }
 
         return super.onOptionsItemSelected(item);
