@@ -10,7 +10,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 public class MovieDbHelper extends SQLiteOpenHelper{
     public static final String DATABASE_NAME = "movie.db";
-    public static final int DATABASE_VERSION = 2;
+    public static final int DATABASE_VERSION = 5;
 
     public MovieDbHelper (Context context){
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -61,7 +61,7 @@ public class MovieDbHelper extends SQLiteOpenHelper{
         /*
         * CREATE TABLE most_popular (
         * most_popular_id INTEGER PRIMARY KEY AUTOINCREMENT,
-        * movie_id INTEGER NOT NULL,
+        * movie_id INTEGER PRIMARY KEY NOT NULL,
         * FOREIGN KEY (movie_id) REFERENCES movie(movie_id)
         * );
          */

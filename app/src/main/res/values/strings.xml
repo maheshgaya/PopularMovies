@@ -5,6 +5,11 @@
     <string name="trailer">Trailers: </string>
     <string name="review">Reviews: </string>
     <string name="refresh">Refresh</string>
+    <string name="trailer_list_item">Trailer</string>
+    <string name="review_list_item">Review</string>
+
+    <string name="favorite">Favorite</string>
+    <string name="unfavorite">Unfavorite</string>
 
     <string name="pref_sort_label">Sort by</string>
     <string name="pref_sort_key" translatable="false">sort</string>
