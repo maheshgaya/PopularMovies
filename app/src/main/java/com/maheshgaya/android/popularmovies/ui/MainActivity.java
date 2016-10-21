@@ -1,12 +1,10 @@
 package com.maheshgaya.android.popularmovies.ui;
 
 import android.content.Intent;
-import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -100,8 +98,7 @@ public class MainActivity extends AppCompatActivity{
             Intent settingsIntent = new Intent(this.getApplicationContext(), SettingsActivity.class);
             startActivity(settingsIntent);
             return true;
-        }
-        if (id == R.id.action_refresh){
+        } else if (id == R.id.action_refresh){
             MovieFragment mf = (MovieFragment)getSupportFragmentManager().findFragmentByTag(MOVIE_FRAGMENT_TAG);
             mf.updateMovie();
         }
