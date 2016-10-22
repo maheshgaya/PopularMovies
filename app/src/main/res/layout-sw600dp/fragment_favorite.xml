@@ -16,6 +16,7 @@
         android:id="@+id/gridview_favorite"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        style="@style/MovieListStyle"
         android:verticalSpacing="0dp"
         android:horizontalSpacing="0dp"
         android:stretchMode="columnWidth"
