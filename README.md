@@ -1,7 +1,10 @@
 # PopularMovies
 Android app that gets the most popular movies and top rated movies from The Movie DB.
 
-##Using Source Code
+### Disclaimer
+Icon from: https://icons8.com/web-app/11860/Clapperboard
+
+## Using Source Code
 1. Clone the repository
 
   ```
@@ -10,7 +13,7 @@ Android app that gets the most popular movies and top rated movies from The Movi
 2. Import the root folder of the project from Android Studio (File -> New -> Import Project)
 3. Add your [The Movie DB](https://www.themoviedb.org/) key in the app's gradle build.
 
-##License
+## License
 Copyright 2016 Mahesh Gaya
 
    Licensed under the Apache License, Version 2.0 (the "License");
