@@ -78,15 +78,12 @@ public class FavoriteFragment extends Fragment implements LoaderManager.LoaderCa
 
         mFavoriteMovieAdapter = new MovieAdapter(getActivity(), null, 0);
         mEmptyGridTextView = (TextView)rootView.findViewById(R.id.empty_gridview_text_view);
-        if (mFavoriteMovieAdapter.getCount() == 0){
-            mEmptyGridTextView.setVisibility(View.VISIBLE);
-        } else {
-            mEmptyGridTextView.setVisibility(View.GONE);
-        }
 
         // Get a reference to the GridView, and attach this adapter to it.
         mGridView = (GridView) rootView.findViewById(R.id.gridview_favorite);
+        mGridView.setEmptyView(mEmptyGridTextView);
         mGridView.setAdapter(mFavoriteMovieAdapter);
+
         mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {

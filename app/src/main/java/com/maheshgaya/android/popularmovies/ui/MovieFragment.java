@@ -162,13 +162,9 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
 
         mMovieAdapter = new MovieAdapter(getActivity(), null, 0);
         mEmptyGridTextView = (TextView)rootView.findViewById(R.id.empty_gridview_text_view);
-        if (mMovieAdapter.getCount() == 0){
-            mEmptyGridTextView.setVisibility(View.VISIBLE);
-        } else {
-            mEmptyGridTextView.setVisibility(View.GONE);
-        }
         // Get a reference to the GridView, and attach this adapter to it.
         mGridView = (GridView) rootView.findViewById(R.id.gridview_movie);
+        mGridView.setEmptyView(mEmptyGridTextView);
         mGridView.setAdapter(mMovieAdapter);
         mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
