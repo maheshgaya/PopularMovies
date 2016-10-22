@@ -14,7 +14,7 @@
     </style>
     <style name="ActionBar.Solid.Movie" parent="@style/Widget.AppCompat.Light.ActionBar.Solid.Inverse">
         <item name="displayOptions">useLogo|showHome|showTitle</item>
-        <item name="logo">@drawable/ic_logo</item>
+        <item name="logo">@drawable/actionbar_space_icon</item>
         <item name="android:label">@string/app_name</item>
 
     </style>

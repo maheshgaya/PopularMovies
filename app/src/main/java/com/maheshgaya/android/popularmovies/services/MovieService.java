@@ -1,6 +1,7 @@
-package com.maheshgaya.android.popularmovies.service;
+package com.maheshgaya.android.popularmovies.services;
 
 import android.app.IntentService;
+import android.content.BroadcastReceiver;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
@@ -10,10 +11,12 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.maheshgaya.android.popularmovies.BuildConfig;
 import com.maheshgaya.android.popularmovies.Constant;
 import com.maheshgaya.android.popularmovies.R;
+import com.maheshgaya.android.popularmovies.Utility;
 import com.maheshgaya.android.popularmovies.data.MovieContract;
 import com.maheshgaya.android.popularmovies.ui.MovieAdapter;
 
@@ -34,7 +37,6 @@ import java.net.URL;
 
 public class MovieService extends IntentService{
     private static final String LOG_TAG = MovieService.class.getSimpleName();
-    MovieAdapter mMovieAdapter;
     private final String BASE_URL = "http://api.themoviedb.org/3/movie/";
     private final String APPID_PARAM = "api_key";
 
@@ -42,9 +44,11 @@ public class MovieService extends IntentService{
     private static final String TOP_RATED_MOVIE_RANKING = "top_rated";
 
     public static final String MOVIE_SORT_EXTRA = "mse";
+
     public MovieService(){
-        super("PopularMovies");
+        super("MovieService");
     }
+
     @Override
     protected void onHandleIntent(Intent intent) {
         String sortPref = intent.getStringExtra(MOVIE_SORT_EXTRA);
@@ -548,7 +552,6 @@ public class MovieService extends IntentService{
             //then search for reviews and trailers
             getMovieReview(movieApiId, movieId);
             getMovieTrailer(movieApiId, movieId);
-
         }
     }
 
@@ -566,8 +569,6 @@ public class MovieService extends IntentService{
                         long reviewId = addReview(movieId, reviewUrl);
                         //Log.d(LOG_TAG, "getMovieReviewDataFromJson: " + review.toString());
                     }
-
-
                 }
             }
         } catch (JSONException e) {
@@ -600,8 +601,7 @@ public class MovieService extends IntentService{
             Log.e(LOG_TAG, e.getMessage(), e);
             e.printStackTrace();
         }
-
-
     }
+
 
 }

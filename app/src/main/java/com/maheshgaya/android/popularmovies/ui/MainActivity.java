@@ -105,9 +105,6 @@ public class MainActivity extends AppCompatActivity implements MovieFragment.Cal
             Intent settingsIntent = new Intent(this.getApplicationContext(), SettingsActivity.class);
             startActivity(settingsIntent);
             return true;
-        } else if (id == R.id.action_refresh){
-            MovieFragment mf = (MovieFragment)getSupportFragmentManager().findFragmentById(R.id.fragment_movie);
-            mf.updateMovie();
         } else if (id == R.id.action_favorite){
             Intent favoriteIntent = new Intent(this.getApplicationContext(), FavoriteActivity.class);
             startActivity(favoriteIntent);

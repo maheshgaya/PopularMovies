@@ -1,6 +1,5 @@
 package com.maheshgaya.android.popularmovies.ui;
 
-import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -17,7 +16,6 @@ import android.widget.GridView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.maheshgaya.android.popularmovies.Constant;
 import com.maheshgaya.android.popularmovies.R;
 import com.maheshgaya.android.popularmovies.data.MovieContract;
 

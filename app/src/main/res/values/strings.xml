@@ -26,5 +26,8 @@
     <string name="pref_top_rated_label">Top Rated</string>
     <string name="pref_popular_label">Most Popular</string>
 
-    <string name="empty_gridview">Oops! No movie posters available. You may be offline.</string>
+    <string name="empty_gridview">Oops! No movie posters available. Tap on refresh.</string>
+
+    <string name="sync_account_type">popularmovies.maheshgaya.com</string>
+    <string name="content_authority">com.maheshgaya.android.popularmovies.app</string>
 </resources>

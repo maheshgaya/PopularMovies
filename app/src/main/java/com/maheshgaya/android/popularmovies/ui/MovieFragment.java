@@ -1,5 +1,8 @@
 package com.maheshgaya.android.popularmovies.ui;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -9,7 +12,10 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,8 +26,9 @@ import android.widget.TextView;
 
 import com.maheshgaya.android.popularmovies.data.MovieContract;
 import com.maheshgaya.android.popularmovies.R;
-import com.maheshgaya.android.popularmovies.service.MovieService;
+import com.maheshgaya.android.popularmovies.services.MovieService;
 import com.maheshgaya.android.popularmovies.Utility;
+import com.maheshgaya.android.popularmovies.sync.MovieSyncAdapter;
 
 /**
  * Copyright (c) Mahesh Gaya
@@ -95,7 +102,13 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
     public void onCreate(@Nullable Bundle savedInstanceState) {
         setRetainInstance(true);
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
 
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.fragment_movie_menu, menu);
     }
 
 
@@ -107,7 +120,14 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
      */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
+        if (id == R.id.action_refresh) {
+            updateMovie();
+            return true;
+        }
         return super.onOptionsItemSelected(item);
     }
 
@@ -118,12 +138,10 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
     public void updateMovie(){
         //will get movies according to sort preference
         //default is Most Popular (popular)
-        Intent intent = new Intent(getActivity(), MovieService.class);
-        intent.putExtra(MovieService.MOVIE_SORT_EXTRA,
-                Utility.getSortPreference(getActivity()));
-        getActivity().startService(intent);
-
-
+//        Intent intent = new Intent(getActivity(), MovieService.class);
+//        intent.putExtra(MovieService.MOVIE_SORT_EXTRA, Utility.getSortPreference(getActivity()));
+//        getActivity().startService(intent);
+        MovieSyncAdapter.syncImmediately(getActivity());
 
     }
 
