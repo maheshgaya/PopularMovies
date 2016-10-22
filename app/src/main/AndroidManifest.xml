@@ -53,13 +53,10 @@
                 android:value=".ui.MainActivity"/>
         </activity>
         <provider
-            android:authorities="com.maheshgaya.android.popularmovies.app"
+            android:authorities="@string/content_authority"
             android:name=".data.MovieProvider"
-            android:enabled="true"
-            android:exported="true"/>
-        <service
-            android:name="com.maheshgaya.android.popularmovies.services.MovieService">
-        </service>
+            android:exported="true"
+            android:syncable="true"/>
 
         <!-- SyncAdapter's dummy authentication service -->
         <service android:name=".sync.MovieAuthenticatorService">
@@ -73,7 +70,7 @@
 
         <!-- The SyncAdapter service -->
         <service
-            android:name=".sync.MovieAuthenticatorService"
+            android:name=".sync.MovieSyncService"
             android:exported="true"
             >
             <intent-filter>

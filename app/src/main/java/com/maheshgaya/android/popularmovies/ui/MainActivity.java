@@ -9,6 +9,7 @@ import android.view.MenuItem;
 
 import com.maheshgaya.android.popularmovies.R;
 import com.maheshgaya.android.popularmovies.Utility;
+import com.maheshgaya.android.popularmovies.sync.MovieSyncAdapter;
 
 /**
  * Copyright (c) Mahesh Gaya
@@ -55,6 +56,7 @@ public class MainActivity extends AppCompatActivity implements MovieFragment.Cal
         }
         MovieFragment movieFragment = ((MovieFragment)getSupportFragmentManager()
             .findFragmentById(R.id.fragment_movie));
+        MovieSyncAdapter.initializeSyncAdapter(this);
     }
 
     @Override

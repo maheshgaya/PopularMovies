@@ -26,7 +26,6 @@ import android.widget.TextView;
 
 import com.maheshgaya.android.popularmovies.data.MovieContract;
 import com.maheshgaya.android.popularmovies.R;
-import com.maheshgaya.android.popularmovies.services.MovieService;
 import com.maheshgaya.android.popularmovies.Utility;
 import com.maheshgaya.android.popularmovies.sync.MovieSyncAdapter;
 
@@ -89,6 +88,7 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
     }
 
     public void onSortPrefChanged(){
+        updateMovie();
         getLoaderManager().restartLoader(MOVIE_LOADER, null, this);
     }
 
@@ -124,10 +124,10 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-        if (id == R.id.action_refresh) {
-            updateMovie();
-            return true;
-        }
+//        if (id == R.id.action_refresh) {
+//            updateMovie();
+//            return true;
+//        }
         return super.onOptionsItemSelected(item);
     }
 
@@ -237,8 +237,6 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
         mMovieAdapter.swapCursor(cursor);
-
-
         if (mPosition != GridView.INVALID_POSITION){
             mGridView.smoothScrollToPosition(mPosition);
         }

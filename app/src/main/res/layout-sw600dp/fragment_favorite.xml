@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.FavoriteActivity$FavoriteFragment">
+    <TextView
+        android:id="@+id/empty_gridview_text_view"
+        android:text="@string/empty_gridview_favorite"
+        android:gravity="center"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+    <GridView
+        android:id="@+id/gridview_favorite"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:verticalSpacing="0dp"
+        android:horizontalSpacing="0dp"
+        android:stretchMode="columnWidth"
+        android:numColumns="3"
+        android:gravity="fill"/>
+
+
+</RelativeLayout>
