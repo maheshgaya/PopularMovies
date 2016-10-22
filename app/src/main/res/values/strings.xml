@@ -7,6 +7,10 @@
     <string name="refresh">Refresh</string>
     <string name="trailer_list_item">Trailer</string>
     <string name="review_list_item">Review</string>
+    <string name="no_review_available">No reviews</string>
+    <string name="no_trailer_available">No trailers</string>
+    <string name="favorite_movies">Favorite Movies</string>
+    <string name="action_share">Share Movie</string>
 
     <string name="favorite">Favorite</string>
     <string name="unfavorite">Unfavorite</string>

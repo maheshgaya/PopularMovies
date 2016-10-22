@@ -98,6 +98,13 @@
                 android:id="@+id/recycleview_trailer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
+            <TextView
+                android:id="@+id/empty_view_trailer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:visibility="gone"
+                android:text="@string/no_trailer_available" />
 
             <TextView
                 android:id="@+id/review_title_text_view"
@@ -112,6 +119,13 @@
                 android:id="@+id/recycleview_review"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
+            <TextView
+                android:id="@+id/empty_view_review"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:visibility="gone"
+                android:text="@string/no_review_available" />
         </LinearLayout>
     </LinearLayout>
 </ScrollView>

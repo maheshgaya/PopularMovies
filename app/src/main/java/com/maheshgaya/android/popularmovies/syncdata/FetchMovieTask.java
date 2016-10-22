@@ -185,8 +185,9 @@ public class FetchMovieTask extends AsyncTask<String, Void, Void> {
         Cursor reviewCursor = mContext.getContentResolver().query(
                 MovieContract.ReviewEntry.CONTENT_URI,
                 new String[]{MovieContract.ReviewEntry._ID},
-                MovieContract.ReviewEntry.COLUMN_MOVIE_ID + " = ? ",
-                new String[]{ Long.toString(movieId)},
+                MovieContract.ReviewEntry.COLUMN_MOVIE_ID + " = ? AND " +
+                        MovieContract.ReviewEntry.COLUMN_REVIEW_URL + " = ?",
+                new String[]{ Long.toString(movieId), reviewUrl},
                 null
         );
 
@@ -215,8 +216,9 @@ public class FetchMovieTask extends AsyncTask<String, Void, Void> {
         Cursor trailerCursor = mContext.getContentResolver().query(
                 MovieContract.TrailerEntry.CONTENT_URI,
                 new String[]{MovieContract.TrailerEntry._ID},
-                MovieContract.TrailerEntry.COLUMN_MOVIE_ID + " = ? ",
-                new String[]{Long.toString(movieId)},
+                MovieContract.TrailerEntry.COLUMN_MOVIE_ID + " = ? AND " +
+                        MovieContract.TrailerEntry.COLUMN_TRAILER_URL + " = ? ",
+                new String[]{Long.toString(movieId), trailerUrl},
                 null
         );
         try {
@@ -574,11 +576,13 @@ public class FetchMovieTask extends AsyncTask<String, Void, Void> {
             if (movieReviewJsonStr != null) {
                 JSONObject reviewJson = new JSONObject(movieReviewJsonStr);
                 JSONArray reviewArray = reviewJson.getJSONArray(Constant.TMDB_REVIEW_RESULTS);
+                Log.d(LOG_TAG, "getMovieReviewDataFromJson: " + movieReviewJsonStr);
                 if (reviewArray.length() != 0) {
                     for (int i = 0; i < reviewArray.length(); i++) {
                         JSONObject review = reviewArray.getJSONObject(i);
                         String reviewUrl = review.getString(Constant.TMDB_REVIEW_URL);
                         long reviewId = addReview(movieId, reviewUrl);
+                        Log.d(LOG_TAG, "getMovieReviewDataFromJson: " + review.toString());
                     }
 
 
@@ -599,12 +603,13 @@ public class FetchMovieTask extends AsyncTask<String, Void, Void> {
             if (movieTrailerJsonStr != null) {
                 JSONObject trailerJson = new JSONObject(movieTrailerJsonStr);
                 JSONArray trailerArray = trailerJson.getJSONArray(Constant.TMDB_TRAILER_RESULTS);
-
+                Log.d(LOG_TAG, "getMovieTrailerDataFromJson: " + movieTrailerJsonStr);
                 if (trailerArray.length() != 0) {
                     for (int i = 0; i < trailerArray.length(); i++) {
                         JSONObject trailer = trailerArray.getJSONObject(i);
                         String trailerUrl = YOUTUBE_BASE_URL + trailer.getString(Constant.TMDB_TRAILER_KEY);
                         long trailerId = addTrailer(movieId, trailerUrl);
+                        Log.d(LOG_TAG, "getMovieTrailerDataFromJson: " + trailer.toString());
                     }
 
                 }

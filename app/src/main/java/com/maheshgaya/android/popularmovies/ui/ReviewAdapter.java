@@ -1,7 +1,9 @@
 package com.maheshgaya.android.popularmovies.ui;
 
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
+import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,10 +23,19 @@ public class ReviewAdapter extends CursorRecyclerViewAdapter<ReviewAdapter.ViewH
     }
 
     @Override
-    public void onBindViewHolder(ReviewAdapter.ViewHolder viewHolder, Cursor cursor) {
+    public void onBindViewHolder(ViewHolder viewHolder, Cursor cursor) {
         int position = cursor.getPosition() + 1; //add 1 to zero
         viewHolder.mTextView.setText(
                 viewHolder.itemView.getResources().getString(R.string.review_list_item) + " " + position);
+        final String url = cursor.getString(DetailFragment.COLUMN_REVIEW_URL);
+        viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                view.getContext().startActivity(
+                        new Intent(Intent.ACTION_VIEW,
+                                Uri.parse(url)));
+            }
+        });
     }
 
     @Override
