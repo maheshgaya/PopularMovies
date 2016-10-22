@@ -18,5 +18,9 @@
         <item name="android:label">@string/app_name</item>
 
     </style>
+    
+    <style name="MovieListStyle">
+
+    </style>
 
 </resources>

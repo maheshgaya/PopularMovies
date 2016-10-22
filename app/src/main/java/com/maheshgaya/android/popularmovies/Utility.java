@@ -1,11 +1,8 @@
-package com.maheshgaya.android.popularmovies.syncdata;
+package com.maheshgaya.android.popularmovies;
 
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
-import android.util.Log;
-
-import com.maheshgaya.android.popularmovies.R;
 
 /**
  * Created by Mahesh Gaya on 10/18/16.

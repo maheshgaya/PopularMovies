@@ -3,6 +3,8 @@ package com.maheshgaya.android.popularmovies.ui;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.NavUtils;
+import android.support.v4.app.TaskStackBuilder;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -34,10 +36,15 @@ public class DetailActivity extends AppCompatActivity{
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
-        setTitle(getResources().getString(R.string.movie_detail));
+
         if (savedInstanceState == null) {
+            Bundle arguments = new Bundle();
+            arguments.putParcelable(DetailFragment.DETAIL_URI, getIntent().getData());
+
+            DetailFragment fragment = new DetailFragment();
+            fragment.setArguments(arguments);
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.container_detail, new DetailFragment())
+                    .add(R.id.movie_detail_container, fragment)
                     .commit();
         }
     }
@@ -52,6 +59,7 @@ public class DetailActivity extends AppCompatActivity{
         getMenuInflater().inflate(R.menu.detail_menu, menu);
         return true;
     }
+
 
     /**
      * onOptionsItemSelected
@@ -68,6 +76,7 @@ public class DetailActivity extends AppCompatActivity{
             startActivity(settingsIntent);
             return true;
         }
+
         return super.onOptionsItemSelected(item);
     }
 

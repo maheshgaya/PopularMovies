@@ -76,9 +76,13 @@ public class MovieContract{
         }
 
         //content://com.maheshgaya.android.popularmovies.app/favorite/movie/[movie_id]
-        public static Uri buildFavoriteMovie(int movie_id){
+        public static Uri buildFavoriteMovieByMovieId(int movie_id){
             return CONTENT_URI.buildUpon().appendPath(MovieEntry.TABLE_NAME)
                     .appendPath(Integer.toString(movie_id)).build();
+        }
+
+        public static Uri buildFavoriteMovies(){
+            return CONTENT_URI.buildUpon().appendPath(MovieEntry.TABLE_NAME + "s").build();
         }
 
         public static String getMovieIdFromUri(Uri uri){

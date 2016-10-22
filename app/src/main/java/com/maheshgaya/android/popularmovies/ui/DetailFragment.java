@@ -47,6 +47,10 @@ public class DetailFragment extends Fragment  implements LoaderManager.LoaderCal
 
     private static final String POPULAR_MOVIES_HASH = " #PopularMovies";
 
+    static final String DETAIL_URI = "URI";
+
+    private Uri mUri;
+
     private static final int DETAIL_LOADER = 0;
     private static final int REVIEW_LOADER = 1;
     private static final int TRAILER_LOADER = 2;
@@ -129,6 +133,7 @@ public class DetailFragment extends Fragment  implements LoaderManager.LoaderCal
     private ShareActionProvider mShareActionProvider;
     public DetailFragment(){setHasOptionsMenu(true);}
 
+
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.detailfragment_menu, menu);
@@ -204,7 +209,7 @@ public class DetailFragment extends Fragment  implements LoaderManager.LoaderCal
     private Intent createShareIntent(){
         Intent shareIntent = new Intent(android.content.Intent.ACTION_SEND);
         shareIntent.setType("text/plain");
-        shareIntent.putExtra(Intent.EXTRA_TEXT, "Watch " + mMovieTitle + " " + mMovieFirstTrailerUrl + POPULAR_MOVIES_HASH);
+        shareIntent.putExtra(Intent.EXTRA_TEXT, getContext().getString(R.string.watch_share) + mMovieTitle + " " + mMovieFirstTrailerUrl + POPULAR_MOVIES_HASH);
         return shareIntent;
     }
 
@@ -220,7 +225,13 @@ public class DetailFragment extends Fragment  implements LoaderManager.LoaderCal
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
-        Intent intent = getActivity().getIntent();
+        Bundle arguments = getArguments();
+        if (arguments != null) {
+            mUri = arguments.getParcelable(DetailFragment.DETAIL_URI);
+        }
+        if (mUri == null){
+            return inflater.inflate(R.layout.empty_fragment_detail, container, false);
+        }
 
         //initialize views
         mTitleTextView = (TextView)rootView.findViewById(R.id.detail_title_text_view);
@@ -239,13 +250,13 @@ public class DetailFragment extends Fragment  implements LoaderManager.LoaderCal
         mFavoriteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                int movieId = Integer.parseInt(getActivity().getIntent().getData().getLastPathSegment());
+                int movieId = Integer.parseInt(mUri.getLastPathSegment());
                 String buttonText = mFavoriteButton.getText().toString();
                 if (buttonText.equals(getString(R.string.unfavorite))){
                     //remove from db
                     boolean removeResult = removeFavorite(movieId);
                     mFavoriteButton.setText(getString(R.string.favorite));
-                    if (Build.VERSION.SDK_INT <= 23){
+                    if (Build.VERSION.SDK_INT < 23){
                         mFavoriteButton.setTextColor(getResources().getColor(R.color.colorBlack));
                     } else {
                         mFavoriteButton.setTextColor(getResources().getColor(R.color.colorBlack, null));
@@ -255,7 +266,7 @@ public class DetailFragment extends Fragment  implements LoaderManager.LoaderCal
                     //add to db
                     long favoriteId = addFavorite(movieId);
                     mFavoriteButton.setText(getString(R.string.unfavorite));
-                    if (Build.VERSION.SDK_INT <= 23){
+                    if (Build.VERSION.SDK_INT < 23){
                         mFavoriteButton.setTextColor(getResources().getColor(R.color.colorPrimary));
                     } else {
                         mFavoriteButton.setTextColor(getResources().getColor(R.color.colorPrimary, null));
@@ -289,25 +300,27 @@ public class DetailFragment extends Fragment  implements LoaderManager.LoaderCal
         return rootView;
     }
 
+
     @Override
     public Loader onCreateLoader(int id, Bundle args) {
-        Intent intent = getActivity().getIntent();
-        if (intent == null) {
+        if (mUri == null){
             return null;
         }
         switch (id) {
             case DETAIL_LOADER: {
-                return new CursorLoader(
-                        getActivity(),
-                        intent.getData(),
-                        MOVIE_COLUMNS_PROJECTION,
-                        null,
-                        null,
-                        null
-                );
+                if (null != mUri) {
+                    return new CursorLoader(
+                            getActivity(),
+                            mUri,
+                            MOVIE_COLUMNS_PROJECTION,
+                            null,
+                            null,
+                            null
+                    );
+                }
             }
             case REVIEW_LOADER:{
-                int movieId = Integer.parseInt(intent.getData().getLastPathSegment()) ;
+                int movieId = Integer.parseInt(mUri.getLastPathSegment()) ;
                 Uri reviewUri = MovieContract.ReviewEntry.buildReviewMovie(movieId);
                 return new CursorLoader(
                         getActivity(),
@@ -319,7 +332,7 @@ public class DetailFragment extends Fragment  implements LoaderManager.LoaderCal
                 );
             }
             case TRAILER_LOADER:{
-                int movieId = Integer.parseInt(intent.getData().getLastPathSegment()) ;
+                int movieId = Integer.parseInt(mUri.getLastPathSegment()) ;
                 Uri trailerUri = MovieContract.TrailerEntry.buildTrailerMovie(movieId);
 
                 return new CursorLoader(
@@ -332,7 +345,7 @@ public class DetailFragment extends Fragment  implements LoaderManager.LoaderCal
                 );
             }
             case FAVORITE_LOADER:{
-                int movieId = Integer.parseInt(intent.getData().getLastPathSegment()) ;
+                int movieId = Integer.parseInt(mUri.getLastPathSegment()) ;
                 Uri favoriteUri = MovieContract.FavoriteEntry.CONTENT_URI;
 
                 return new CursorLoader(

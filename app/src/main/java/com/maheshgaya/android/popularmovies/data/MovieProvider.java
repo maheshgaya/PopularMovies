@@ -27,6 +27,7 @@ public class MovieProvider extends ContentProvider {
 
     private static final int FAVORITE = 200;
     private static final int FAVORITE_WITH_MOVIE_ID = 201;
+    private static final int FAVORITE_MOVIES = 202; //inner join
 
     private static final int MOST_POPULAR = 300;
     private static final int MOST_POPULAR_WITH_MOVIES = 301; //inner join
@@ -81,6 +82,17 @@ public class MovieProvider extends ContentProvider {
                 projection,
                 selection,
                 selectionArgs,
+                null,
+                null,
+                sortOrder
+        );
+    }
+    private Cursor getFavoriteMovie(Uri uri, String[] projection, String sortOrder){
+        return sFavoriteMovieQueryBuilder.query(
+                mOpenHelper.getReadableDatabase(),
+                projection,
+                null,
+                null,
                 null,
                 null,
                 sortOrder
@@ -275,6 +287,8 @@ public class MovieProvider extends ContentProvider {
         //Initialize uri matcher
         final UriMatcher matcher = new UriMatcher(UriMatcher.NO_MATCH);
         final String authority = MovieContract.CONTENT_AUTHORITY;
+        //movies
+        final  String moviesStr = MovieContract.MovieEntry.TABLE_NAME + "s";
 
         //each uri
         //content://authority/movie
@@ -285,9 +299,10 @@ public class MovieProvider extends ContentProvider {
         matcher.addURI(authority, MovieContract.FavoriteEntry.TABLE_NAME, FAVORITE);
         //content://authority/favorite/movie/#
         matcher.addURI(authority, MovieContract.FavoriteEntry.TABLE_NAME + "/" + MovieContract.MovieEntry.TABLE_NAME + "/#", FAVORITE_WITH_MOVIE_ID);
+        //content://authrity/favorite/movies
+        matcher.addURI(authority, MovieContract.FavoriteEntry.TABLE_NAME + "/" + moviesStr, FAVORITE_MOVIES );
 
-        //movies
-        final  String moviesStr = MovieContract.MovieEntry.TABLE_NAME + "s";
+
 
         //content://authority/most_popular
         matcher.addURI(authority, MovieContract.MostPopularEntry.TABLE_NAME, MOST_POPULAR);
@@ -366,6 +381,10 @@ public class MovieProvider extends ContentProvider {
             }
             case FAVORITE_WITH_MOVIE_ID:{
                 retCursor = getFavoriteByMovieId(uri, projection, sortOrder);
+                break;
+            }
+            case FAVORITE_MOVIES:{
+                retCursor = getFavoriteMovie(uri, projection, sortOrder);
                 break;
             }
             case MOST_POPULAR:{
@@ -467,6 +486,9 @@ public class MovieProvider extends ContentProvider {
             }
             case FAVORITE_WITH_MOVIE_ID:{
                 return MovieContract.FavoriteEntry.CONTENT_ITEM_TYPE;
+            }
+            case FAVORITE_MOVIES:{
+                return MovieContract.FavoriteEntry.CONTENT_TYPE;
             }
             case MOST_POPULAR:{
                 return MovieContract.MostPopularEntry.CONTENT_TYPE;

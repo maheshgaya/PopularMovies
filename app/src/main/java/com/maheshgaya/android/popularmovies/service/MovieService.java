@@ -1,23 +1,21 @@
-package com.maheshgaya.android.popularmovies.syncdata;
+package com.maheshgaya.android.popularmovies.service;
 
-/**
- * Created by Mahesh Gaya on 10/17/16.
- */
-
+import android.app.IntentService;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.util.Log;
 
 import com.maheshgaya.android.popularmovies.BuildConfig;
 import com.maheshgaya.android.popularmovies.Constant;
 import com.maheshgaya.android.popularmovies.R;
 import com.maheshgaya.android.popularmovies.data.MovieContract;
+import com.maheshgaya.android.popularmovies.ui.MovieAdapter;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -29,244 +27,38 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.Vector;
 
 /**
- * FetchMovieTask
- * fetch movie data using async task
+ * Created by Mahesh Gaya on 10/22/16.
  */
-//AsyncTask<params, progress, result>
-public class FetchMovieTask extends AsyncTask<String, Void, Void> {
 
-    private final String LOG_TAG = FetchMovieTask.class.getSimpleName(); //logging purposes
-    private Context mContext;
+public class MovieService extends IntentService{
+    private static final String LOG_TAG = MovieService.class.getSimpleName();
+    MovieAdapter mMovieAdapter;
     private final String BASE_URL = "http://api.themoviedb.org/3/movie/";
     private final String APPID_PARAM = "api_key";
 
     private static final String POPULAR_MOVIE_RANKING = "popular";
     private static final String TOP_RATED_MOVIE_RANKING = "top_rated";
 
-    public FetchMovieTask(Context context){
-        this.mContext = context;
+    public static final String MOVIE_SORT_EXTRA = "mse";
+    public MovieService(){
+        super("PopularMovies");
     }
-
-    /*******************
-     * Add to Database
-     *******************/
-
-    /**
-     * long addMovie
-     * @param movieApiId
-     * @param title
-     * @param imageUrl
-     * @param plot
-     * @param ratings
-     * @param releaseDate
-     * @return movieId
-     */
-
-    long addMovie(int movieApiId, String title, String imageUrl, String plot, double ratings, String releaseDate){
-        long movieId;
-        //First, query database and check if record already exists
-        Cursor movieCursor = mContext.getContentResolver().query(
-                MovieContract.MovieEntry.CONTENT_URI,
-                new String[]{MovieContract.MovieEntry._ID},
-                MovieContract.MovieEntry.COLUMN_MOVIE_API_ID + " = ? ",
-                new String[]{Integer.toString(movieApiId)},
-                null
-        );
-
-        try {
-            if (movieCursor.moveToFirst()) {
-                //if record exists, return that record
-                int movieIdIndex = movieCursor.getColumnIndex(MovieContract.MovieEntry._ID);
-                movieId = movieCursor.getLong(movieIdIndex);
-            } else {
-                //insert the record into database
-                //Create contentValue to hold the data
-                ContentValues movieValues = new ContentValues();
-                movieValues.put(MovieContract.MovieEntry.COLUMN_MOVIE_API_ID, movieApiId);
-                movieValues.put(MovieContract.MovieEntry.COLUMN_TITLE, title);
-                movieValues.put(MovieContract.MovieEntry.COLUMN_IMAGE_URL, imageUrl);
-                movieValues.put(MovieContract.MovieEntry.COLUMN_PLOT, plot);
-                movieValues.put(MovieContract.MovieEntry.COLUMN_RATINGS, ratings);
-                movieValues.put(MovieContract.MovieEntry.COLUMN_RELEASE_DATE, releaseDate);
-
-                //Then add movie to database
-                Uri insertUri = mContext.getContentResolver().insert(
-                        MovieContract.MovieEntry.CONTENT_URI,
-                        movieValues
-                );
-                movieId = ContentUris.parseId(insertUri);
-            }
-        } finally {
-            movieCursor.close();
-        }
-
-        return  movieId;
-    }
-
-    /**
-     * long addMovieToMostPopular
-     * @param movieId
-     * @return mostPopularId
-     */
-    long addMovieToMostPopular(long movieId){
-        long mostPopularId;
-        //query table to see if the movie already has a record
-        Cursor mostPopularCursor = mContext.getContentResolver().query(
-                MovieContract.MostPopularEntry.CONTENT_URI,
-                new String[]{MovieContract.MostPopularEntry._ID},
-                MovieContract.MostPopularEntry.COLUMN_MOVIE_ID + " = ? ",
-                new String[]{Long.toString(movieId)},
-                null
-        );
-        try {
-            if (mostPopularCursor.moveToFirst()){
-                int mostPopularIndex = mostPopularCursor.getColumnIndex(MovieContract.MostPopularEntry._ID);
-                mostPopularId = mostPopularCursor.getLong(mostPopularIndex);
-            } else {
-                ContentValues mostPopularValues = new ContentValues();
-                mostPopularValues.put(MovieContract.MostPopularEntry.COLUMN_MOVIE_ID, movieId);
-                //Then add most popular to database
-                Uri insertUri = mContext.getContentResolver().insert(
-                        MovieContract.MostPopularEntry.CONTENT_URI,
-                        mostPopularValues
-                );
-                mostPopularId = ContentUris.parseId(insertUri);
-            }
-        } finally {
-            mostPopularCursor.close();
-        }
-
-        return mostPopularId;
-    }
-
-    /**
-     * long addMovieToTopRated
-     * @param movieId
-     * @return topRatedId
-     */
-    long addMovieToTopRated(long movieId){
-        long topRatedId;
-        //query table to see if the movie already has a record
-        Cursor topRatedCursor = mContext.getContentResolver().query(
-                MovieContract.TopRatedEntry.CONTENT_URI,
-                new String[]{MovieContract.TopRatedEntry._ID},
-                MovieContract.TopRatedEntry.COLUMN_MOVIE_ID + " = ? ",
-                new String[]{Long.toString(movieId)},
-                null
-        );
-
-        try {
-            if (topRatedCursor.moveToFirst()){
-                int topRatedIndex = topRatedCursor.getColumnIndex(MovieContract.TopRatedEntry._ID);
-                topRatedId = topRatedCursor.getLong(topRatedIndex);
-            } else {
-                ContentValues topRatedValues = new ContentValues();
-                topRatedValues.put(MovieContract.TopRatedEntry.COLUMN_MOVIE_ID, movieId);
-                //Then add top rated to database
-                Uri insertUri = mContext.getContentResolver().insert(
-                        MovieContract.TopRatedEntry.CONTENT_URI,
-                        topRatedValues
-                );
-                topRatedId = ContentUris.parseId(insertUri);
-            }
-        } finally {
-            topRatedCursor.close();
-        }
-        return topRatedId;
-
-    }
-
-    long addReview(long movieId, String reviewUrl){
-        long reviewId;
-        //query table to see if review already exists
-        Cursor reviewCursor = mContext.getContentResolver().query(
-                MovieContract.ReviewEntry.CONTENT_URI,
-                new String[]{MovieContract.ReviewEntry._ID},
-                MovieContract.ReviewEntry.COLUMN_MOVIE_ID + " = ? AND " +
-                        MovieContract.ReviewEntry.COLUMN_REVIEW_URL + " = ?",
-                new String[]{ Long.toString(movieId), reviewUrl},
-                null
-        );
-
-        try {
-            if (reviewCursor.moveToFirst()){
-                int reviewIndex = reviewCursor.getColumnIndex(MovieContract.ReviewEntry._ID);
-                reviewId = reviewCursor.getLong(reviewIndex);
-            } else {
-                ContentValues reviewValues = new ContentValues();
-                reviewValues.put(MovieContract.ReviewEntry.COLUMN_MOVIE_ID, movieId);
-                reviewValues.put(MovieContract.ReviewEntry.COLUMN_REVIEW_URL, reviewUrl);
-                Uri insertUri = mContext.getContentResolver().insert(
-                        MovieContract.ReviewEntry.CONTENT_URI,
-                        reviewValues
-                );
-                reviewId = ContentUris.parseId(insertUri);
-            }
-        } finally {
-            reviewCursor.close();
-        }
-        return  reviewId;
-    }
-
-    long addTrailer(long movieId, String trailerUrl){
-        long trailerId;
-        Cursor trailerCursor = mContext.getContentResolver().query(
-                MovieContract.TrailerEntry.CONTENT_URI,
-                new String[]{MovieContract.TrailerEntry._ID},
-                MovieContract.TrailerEntry.COLUMN_MOVIE_ID + " = ? AND " +
-                        MovieContract.TrailerEntry.COLUMN_TRAILER_URL + " = ? ",
-                new String[]{Long.toString(movieId), trailerUrl},
-                null
-        );
-        try {
-            if (trailerCursor.moveToFirst()){
-                int trailerIndex = trailerCursor.getColumnIndex(MovieContract.TrailerEntry._ID);
-                trailerId = trailerCursor.getLong(trailerIndex);
-            } else {
-                ContentValues trailerValues = new ContentValues();
-                trailerValues.put(MovieContract.TrailerEntry.COLUMN_MOVIE_ID, movieId);
-                trailerValues.put(MovieContract.TrailerEntry.COLUMN_TRAILER_URL, trailerUrl);
-                Uri insertUri = mContext.getContentResolver().insert(
-                        MovieContract.TrailerEntry.CONTENT_URI,
-                        trailerValues
-                );
-                trailerId = ContentUris.parseId(insertUri);
-            }
-        } finally {
-            trailerCursor.close();
-        }
-        return  trailerId;
-    }
-
-    /************************
-     * DO IT IN BACKGROUND
-     * Http Connections
-     ************************/
-
-    /**
-     * doInBackground
-     * @param params
-     * @return movies as array
-     * will fetch data from The Movie DB API
-     */
     @Override
-    protected Void doInBackground(String... params) {
-        //Log.d(LOG_TAG, "doInBackground: method executed");
-
+    protected void onHandleIntent(Intent intent) {
+        String sortPref = intent.getStringExtra(MOVIE_SORT_EXTRA);
         //check if device is connected to internet
         //      if not just show blank fragment
         if (!isOnline()){
             //Log.d(TAG, "doInBackground: isOnline(): " + isOnline());
-            return null;
+            return;
         }
 
         //if params are empty, return null
-        if (params.length == 0) {
+        if (sortPref.equals("")) {
             //Log.d(TAG, "doInBackground: empty params");
-            return null;
+            return;
         }
 
 
@@ -288,10 +80,10 @@ public class FetchMovieTask extends AsyncTask<String, Void, Void> {
             String baseUrl = MOVIE_POPULAR_BASE_URL; //default value
 
             //check the preference
-            if (params[0].equals(mContext.getResources().getString(R.string.pref_popular))){
+            if (sortPref.equals(this.getResources().getString(R.string.pref_popular))){
                 baseUrl = MOVIE_POPULAR_BASE_URL;
                 movieRanking = POPULAR_MOVIE_RANKING;
-            } else if (params[0].equals(mContext.getResources().getString(R.string.pref_top_rated))){
+            } else if (sortPref.equals(this.getResources().getString(R.string.pref_top_rated))){
                 baseUrl = MOVIE_TOP_RATED_BASE_URL;
                 movieRanking = TOP_RATED_MOVIE_RANKING;
             }
@@ -314,7 +106,7 @@ public class FetchMovieTask extends AsyncTask<String, Void, Void> {
 
             //if stream empty, return null
             if (inputStream == null){
-                return null;
+                return;
             }
 
             reader = new BufferedReader(new InputStreamReader(inputStream));
@@ -327,7 +119,7 @@ public class FetchMovieTask extends AsyncTask<String, Void, Void> {
 
             //if buffer empty, return null
             if (stringBuffer.length() == 0){
-                return null;
+                return;
             }
 
             //Getting data is successful
@@ -357,9 +149,199 @@ public class FetchMovieTask extends AsyncTask<String, Void, Void> {
             Log.e(LOG_TAG, "doInBackground: ", e );
         }
 
-        return null; //nothing happened
+        return; //nothing happened
     }
 
+    /*******************
+     * Add to Database
+     *******************/
+
+    /**
+     * long addMovie
+     * @param movieApiId
+     * @param title
+     * @param imageUrl
+     * @param plot
+     * @param ratings
+     * @param releaseDate
+     * @return movieId
+     */
+
+    long addMovie(int movieApiId, String title, String imageUrl, String plot, double ratings, String releaseDate){
+        long movieId;
+        //First, query database and check if record already exists
+        Cursor movieCursor = this.getContentResolver().query(
+                MovieContract.MovieEntry.CONTENT_URI,
+                new String[]{MovieContract.MovieEntry._ID},
+                MovieContract.MovieEntry.COLUMN_MOVIE_API_ID + " = ? ",
+                new String[]{Integer.toString(movieApiId)},
+                null
+        );
+
+        try {
+            if (movieCursor.moveToFirst()) {
+                //if record exists, return that record
+                int movieIdIndex = movieCursor.getColumnIndex(MovieContract.MovieEntry._ID);
+                movieId = movieCursor.getLong(movieIdIndex);
+            } else {
+                //insert the record into database
+                //Create contentValue to hold the data
+                ContentValues movieValues = new ContentValues();
+                movieValues.put(MovieContract.MovieEntry.COLUMN_MOVIE_API_ID, movieApiId);
+                movieValues.put(MovieContract.MovieEntry.COLUMN_TITLE, title);
+                movieValues.put(MovieContract.MovieEntry.COLUMN_IMAGE_URL, imageUrl);
+                movieValues.put(MovieContract.MovieEntry.COLUMN_PLOT, plot);
+                movieValues.put(MovieContract.MovieEntry.COLUMN_RATINGS, ratings);
+                movieValues.put(MovieContract.MovieEntry.COLUMN_RELEASE_DATE, releaseDate);
+
+                //Then add movie to database
+                Uri insertUri = this.getContentResolver().insert(
+                        MovieContract.MovieEntry.CONTENT_URI,
+                        movieValues
+                );
+                movieId = ContentUris.parseId(insertUri);
+            }
+        } finally {
+            movieCursor.close();
+        }
+
+        return  movieId;
+    }
+
+    /**
+     * long addMovieToMostPopular
+     * @param movieId
+     * @return mostPopularId
+     */
+    long addMovieToMostPopular(long movieId){
+        long mostPopularId;
+        //query table to see if the movie already has a record
+        Cursor mostPopularCursor = this.getContentResolver().query(
+                MovieContract.MostPopularEntry.CONTENT_URI,
+                new String[]{MovieContract.MostPopularEntry._ID},
+                MovieContract.MostPopularEntry.COLUMN_MOVIE_ID + " = ? ",
+                new String[]{Long.toString(movieId)},
+                null
+        );
+        try {
+            if (mostPopularCursor.moveToFirst()){
+                int mostPopularIndex = mostPopularCursor.getColumnIndex(MovieContract.MostPopularEntry._ID);
+                mostPopularId = mostPopularCursor.getLong(mostPopularIndex);
+            } else {
+                ContentValues mostPopularValues = new ContentValues();
+                mostPopularValues.put(MovieContract.MostPopularEntry.COLUMN_MOVIE_ID, movieId);
+                //Then add most popular to database
+                Uri insertUri = this.getContentResolver().insert(
+                        MovieContract.MostPopularEntry.CONTENT_URI,
+                        mostPopularValues
+                );
+                mostPopularId = ContentUris.parseId(insertUri);
+            }
+        } finally {
+            mostPopularCursor.close();
+        }
+
+        return mostPopularId;
+    }
+
+    /**
+     * long addMovieToTopRated
+     * @param movieId
+     * @return topRatedId
+     */
+    long addMovieToTopRated(long movieId){
+        long topRatedId;
+        //query table to see if the movie already has a record
+        Cursor topRatedCursor = this.getContentResolver().query(
+                MovieContract.TopRatedEntry.CONTENT_URI,
+                new String[]{MovieContract.TopRatedEntry._ID},
+                MovieContract.TopRatedEntry.COLUMN_MOVIE_ID + " = ? ",
+                new String[]{Long.toString(movieId)},
+                null
+        );
+
+        try {
+            if (topRatedCursor.moveToFirst()){
+                int topRatedIndex = topRatedCursor.getColumnIndex(MovieContract.TopRatedEntry._ID);
+                topRatedId = topRatedCursor.getLong(topRatedIndex);
+            } else {
+                ContentValues topRatedValues = new ContentValues();
+                topRatedValues.put(MovieContract.TopRatedEntry.COLUMN_MOVIE_ID, movieId);
+                //Then add top rated to database
+                Uri insertUri = this.getContentResolver().insert(
+                        MovieContract.TopRatedEntry.CONTENT_URI,
+                        topRatedValues
+                );
+                topRatedId = ContentUris.parseId(insertUri);
+            }
+        } finally {
+            topRatedCursor.close();
+        }
+        return topRatedId;
+
+    }
+
+    long addReview(long movieId, String reviewUrl){
+        long reviewId;
+        //query table to see if review already exists
+        Cursor reviewCursor = this.getContentResolver().query(
+                MovieContract.ReviewEntry.CONTENT_URI,
+                new String[]{MovieContract.ReviewEntry._ID},
+                MovieContract.ReviewEntry.COLUMN_MOVIE_ID + " = ? AND " +
+                        MovieContract.ReviewEntry.COLUMN_REVIEW_URL + " = ?",
+                new String[]{ Long.toString(movieId), reviewUrl},
+                null
+        );
+
+        try {
+            if (reviewCursor.moveToFirst()){
+                int reviewIndex = reviewCursor.getColumnIndex(MovieContract.ReviewEntry._ID);
+                reviewId = reviewCursor.getLong(reviewIndex);
+            } else {
+                ContentValues reviewValues = new ContentValues();
+                reviewValues.put(MovieContract.ReviewEntry.COLUMN_MOVIE_ID, movieId);
+                reviewValues.put(MovieContract.ReviewEntry.COLUMN_REVIEW_URL, reviewUrl);
+                Uri insertUri = this.getContentResolver().insert(
+                        MovieContract.ReviewEntry.CONTENT_URI,
+                        reviewValues
+                );
+                reviewId = ContentUris.parseId(insertUri);
+            }
+        } finally {
+            reviewCursor.close();
+        }
+        return  reviewId;
+    }
+
+    long addTrailer(long movieId, String trailerUrl){
+        long trailerId;
+        Cursor trailerCursor = this.getContentResolver().query(
+                MovieContract.TrailerEntry.CONTENT_URI,
+                new String[]{MovieContract.TrailerEntry._ID},
+                MovieContract.TrailerEntry.COLUMN_MOVIE_ID + " = ? AND " +
+                        MovieContract.TrailerEntry.COLUMN_TRAILER_URL + " = ? ",
+                new String[]{Long.toString(movieId), trailerUrl},
+                null
+        );
+        try {
+            if (trailerCursor.moveToFirst()){
+                int trailerIndex = trailerCursor.getColumnIndex(MovieContract.TrailerEntry._ID);
+                trailerId = trailerCursor.getLong(trailerIndex);
+            } else {
+                ContentValues trailerValues = new ContentValues();
+                trailerValues.put(MovieContract.TrailerEntry.COLUMN_MOVIE_ID, movieId);
+                trailerValues.put(MovieContract.TrailerEntry.COLUMN_TRAILER_URL, trailerUrl);
+                Uri insertUri = this.getContentResolver().insert(
+                        MovieContract.TrailerEntry.CONTENT_URI,
+                        trailerValues
+                );
+                trailerId = ContentUris.parseId(insertUri);
+            }
+        } finally {
+            trailerCursor.close();
+        }
+        return  trailerId;
+    }
 
     /**
      * boolean getMovieReview
@@ -519,7 +501,7 @@ public class FetchMovieTask extends AsyncTask<String, Void, Void> {
      * @return internet connectivity status of device
      */
     public boolean isOnline(){
-        ConnectivityManager connectivityManager = (ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
+        ConnectivityManager connectivityManager = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
         return networkInfo != null && networkInfo.isConnectedOrConnecting();
     }
@@ -571,18 +553,18 @@ public class FetchMovieTask extends AsyncTask<String, Void, Void> {
     }
 
     private void getMovieReviewDataFromJson(String movieReviewJsonStr, long movieId)
-        throws JSONException{
+            throws JSONException{
         try {
             if (movieReviewJsonStr != null) {
                 JSONObject reviewJson = new JSONObject(movieReviewJsonStr);
                 JSONArray reviewArray = reviewJson.getJSONArray(Constant.TMDB_REVIEW_RESULTS);
-                Log.d(LOG_TAG, "getMovieReviewDataFromJson: " + movieReviewJsonStr);
+                //Log.d(LOG_TAG, "getMovieReviewDataFromJson: " + movieReviewJsonStr);
                 if (reviewArray.length() != 0) {
                     for (int i = 0; i < reviewArray.length(); i++) {
                         JSONObject review = reviewArray.getJSONObject(i);
                         String reviewUrl = review.getString(Constant.TMDB_REVIEW_URL);
                         long reviewId = addReview(movieId, reviewUrl);
-                        Log.d(LOG_TAG, "getMovieReviewDataFromJson: " + review.toString());
+                        //Log.d(LOG_TAG, "getMovieReviewDataFromJson: " + review.toString());
                     }
 
 
@@ -595,7 +577,7 @@ public class FetchMovieTask extends AsyncTask<String, Void, Void> {
     }
 
     private void getMovieTrailerDataFromJson(String movieTrailerJsonStr, long movieId)
-        throws JSONException{
+            throws JSONException{
         final String YOUTUBE_BASE_URL = "https://www.youtube.com/watch?v=";
 
         //Log.d(LOG_TAG, "getMovieTrailerDataFromJson: " + movieTrailerJsonStr);
@@ -603,13 +585,13 @@ public class FetchMovieTask extends AsyncTask<String, Void, Void> {
             if (movieTrailerJsonStr != null) {
                 JSONObject trailerJson = new JSONObject(movieTrailerJsonStr);
                 JSONArray trailerArray = trailerJson.getJSONArray(Constant.TMDB_TRAILER_RESULTS);
-                Log.d(LOG_TAG, "getMovieTrailerDataFromJson: " + movieTrailerJsonStr);
+                //Log.d(LOG_TAG, "getMovieTrailerDataFromJson: " + movieTrailerJsonStr);
                 if (trailerArray.length() != 0) {
                     for (int i = 0; i < trailerArray.length(); i++) {
                         JSONObject trailer = trailerArray.getJSONObject(i);
                         String trailerUrl = YOUTUBE_BASE_URL + trailer.getString(Constant.TMDB_TRAILER_KEY);
                         long trailerId = addTrailer(movieId, trailerUrl);
-                        Log.d(LOG_TAG, "getMovieTrailerDataFromJson: " + trailer.toString());
+                        //Log.d(LOG_TAG, "getMovieTrailerDataFromJson: " + trailer.toString());
                     }
 
                 }
@@ -621,6 +603,5 @@ public class FetchMovieTask extends AsyncTask<String, Void, Void> {
 
 
     }
-
 
 }

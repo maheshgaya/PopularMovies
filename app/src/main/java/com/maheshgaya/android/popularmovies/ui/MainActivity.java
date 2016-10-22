@@ -1,15 +1,14 @@
 package com.maheshgaya.android.popularmovies.ui;
 
 import android.content.Intent;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
+import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.maheshgaya.android.popularmovies.R;
-import com.maheshgaya.android.popularmovies.syncdata.Utility;
+import com.maheshgaya.android.popularmovies.Utility;
 
 /**
  * Copyright (c) Mahesh Gaya
@@ -21,11 +20,11 @@ import com.maheshgaya.android.popularmovies.syncdata.Utility;
  * MainActivity
  * Deals with showing the posters in grid view format (2 columns)
  * */
-public class MainActivity extends AppCompatActivity{
-    private final String MOVIE_FRAGMENT_TAG = "MTAG";
+public class MainActivity extends AppCompatActivity implements MovieFragment.Callback{
+    private final String DETAIL_FRAGMENT_TAG = "DTAG";
     private final String TAG = MainActivity.class.getSimpleName();
     private String mSortPref;
-    Fragment mFragment;
+    private boolean mTwoPane;
 
     /**
      * onCreate
@@ -41,16 +40,21 @@ public class MainActivity extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mSortPref = Utility.getSortPreference(this); //initialize sort Preference
-        FragmentManager fragmentManager = new MainActivity().getSupportFragmentManager();
-        mFragment = fragmentManager.findFragmentByTag(MOVIE_FRAGMENT_TAG);
-
-        if (savedInstanceState == null) {
-            mFragment = new MovieFragment();
-             getSupportFragmentManager()
-                     .beginTransaction()
-                    .add(R.id.container_main, mFragment, MOVIE_FRAGMENT_TAG)
-                    .commit();
+        if (findViewById(R.id.movie_detail_container) != null){
+            //tablet layout
+            mTwoPane = true;
+            if (savedInstanceState == null){
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.movie_detail_container, new DetailFragment(), DETAIL_FRAGMENT_TAG)
+                        .commit();
+            }
+        } else {
+            //small screen layout
+            mTwoPane = false;
+            getSupportActionBar().setElevation(0f);
         }
+        MovieFragment movieFragment = ((MovieFragment)getSupportFragmentManager()
+            .findFragmentById(R.id.fragment_movie));
     }
 
     @Override
@@ -59,8 +63,11 @@ public class MainActivity extends AppCompatActivity{
         String sortPref = Utility.getSortPreference(this);
         //Log.d(TAG, "onResume: " + sortPref);
         if (sortPref != null && !sortPref.equals(mSortPref)){
-            MovieFragment mf = (MovieFragment)getSupportFragmentManager().findFragmentByTag(MOVIE_FRAGMENT_TAG);
-            mf.onSortPrefChanged();
+            MovieFragment mf = (MovieFragment)getSupportFragmentManager().findFragmentById(R.id.fragment_movie);
+            if (null != mf){
+                mf.onSortPrefChanged();
+            }
+
             mSortPref = sortPref;
         }
     }
@@ -99,13 +106,34 @@ public class MainActivity extends AppCompatActivity{
             startActivity(settingsIntent);
             return true;
         } else if (id == R.id.action_refresh){
-            MovieFragment mf = (MovieFragment)getSupportFragmentManager().findFragmentByTag(MOVIE_FRAGMENT_TAG);
+            MovieFragment mf = (MovieFragment)getSupportFragmentManager().findFragmentById(R.id.fragment_movie);
             mf.updateMovie();
+        } else if (id == R.id.action_favorite){
+            Intent favoriteIntent = new Intent(this.getApplicationContext(), FavoriteActivity.class);
+            startActivity(favoriteIntent);
         }
 
         return super.onOptionsItemSelected(item);
     }
 
 
+    @Override
+    public void onItemSelected(Uri movieUri) {
+        if (mTwoPane){
+            Bundle args = new Bundle();
+            args.putParcelable(DetailFragment.DETAIL_URI, movieUri);
 
+            DetailFragment fragment = new DetailFragment();
+            fragment.setArguments(args);
+
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.movie_detail_container, fragment, DETAIL_FRAGMENT_TAG)
+                    .commit();
+        } else {
+            Intent intent = new Intent(this, DetailActivity.class)
+                    .setData(movieUri);
+            startActivity(intent);
+
+        }
+    }
 }

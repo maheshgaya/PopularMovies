@@ -17,6 +17,8 @@ public class Constant {
     public final static String INSTANCE_STATE_MOVIES_ARRAY = "moviesArray";
     public final static String INSTANCE_MOVIE_FRAGMENT = "mainFragment";
 
+    public final static String CALLING_FRAGMENT = "callingFrag";
+
     //names of JSON tags to be extracted
     //Movies
     public final static String TMDB_RESULTS = "results";
