@@ -3,7 +3,7 @@
     package="com.maheshgaya.android.popularmovies">
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-
+    <!-- icon from https://icons8.com/web-app/11860/Clapperboard -->
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"

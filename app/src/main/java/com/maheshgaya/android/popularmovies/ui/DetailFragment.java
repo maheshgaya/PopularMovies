@@ -9,6 +9,7 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.IntegerRes;
 import android.support.annotation.Nullable;
@@ -244,10 +245,21 @@ public class DetailFragment extends Fragment  implements LoaderManager.LoaderCal
                     //remove from db
                     boolean removeResult = removeFavorite(movieId);
                     mFavoriteButton.setText(getString(R.string.favorite));
+                    if (Build.VERSION.SDK_INT <= 23){
+                        mFavoriteButton.setTextColor(getResources().getColor(R.color.colorBlack));
+                    } else {
+                        mFavoriteButton.setTextColor(getResources().getColor(R.color.colorBlack, null));
+                    }
+
                 } else if (buttonText.equals(getString(R.string.favorite))) {
                     //add to db
                     long favoriteId = addFavorite(movieId);
                     mFavoriteButton.setText(getString(R.string.unfavorite));
+                    if (Build.VERSION.SDK_INT <= 23){
+                        mFavoriteButton.setTextColor(getResources().getColor(R.color.colorPrimary));
+                    } else {
+                        mFavoriteButton.setTextColor(getResources().getColor(R.color.colorPrimary, null));
+                    }
 
                 }
             }
@@ -420,9 +432,20 @@ public class DetailFragment extends Fragment  implements LoaderManager.LoaderCal
                 if (data.getCount() > 0 && data.moveToFirst()){
                     //Allow to Unfavorite
                     mFavoriteButton.setText(getResources().getString(R.string.unfavorite));
+                    if (Build.VERSION.SDK_INT <= 23){
+                        mFavoriteButton.setTextColor(getResources().getColor(R.color.colorPrimary));
+                    } else {
+                        mFavoriteButton.setTextColor(getResources().getColor(R.color.colorPrimary, null));
+                    }
+
                 } else {
                     //Allow to Favorite
                     mFavoriteButton.setText(getResources().getString(R.string.favorite));
+                    if (Build.VERSION.SDK_INT <= 23){
+                        mFavoriteButton.setTextColor(getResources().getColor(R.color.colorBlack));
+                    } else {
+                        mFavoriteButton.setTextColor(getResources().getColor(R.color.colorBlack, null));
+                    }
 
                 }
                 break;
@@ -433,6 +456,6 @@ public class DetailFragment extends Fragment  implements LoaderManager.LoaderCal
 
     @Override
     public void onLoaderReset(Loader loader) {
-        
+
     }
 }
