@@ -1,4 +1,4 @@
-# PopularMovies
+# Popular Movies
 Android app that gets the most popular movies and top rated movies from The Movie DB.
 
 Status of this project: COMPLETED (Oct 22, 2016)
