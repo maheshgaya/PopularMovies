@@ -11,12 +11,13 @@ import android.util.Log;
  */
 
 public class MovieSyncService extends Service {
+    private static final String TAG = MovieSyncService.class.getSimpleName();
     private static final Object sSyncAdapterLock = new Object();
     private static MovieSyncAdapter sMovieSyncAdapter = null;
 
     @Override
     public void onCreate() {
-        Log.d("SunshineSyncService", "onCreate - SunshineSyncService");
+        Log.d(TAG, "onCreate: executed");
         synchronized (sSyncAdapterLock) {
             if (sMovieSyncAdapter == null) {
                 sMovieSyncAdapter = new MovieSyncAdapter(getApplicationContext(), true);
