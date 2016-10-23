@@ -1,6 +1,8 @@
 # PopularMovies
 Android app that gets the most popular movies and top rated movies from The Movie DB.
 
+Status of this project: COMPLETED (Oct 22, 2016)
+
 ### Disclaimer
 - Logo icon from: [Icons8](https://icons8.com/web-app/11860/Clapperboard)
 - Material icons from [Google](https://design.google.com/icons/)
