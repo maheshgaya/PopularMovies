@@ -12,7 +12,7 @@
     <string name="favorite_movies">Favorite Movies</string>
     <string name="action_share">Share Movie</string>
     <string name="empty_gridview_favorite">No favorited movies. Favorite some movies and come back.</string>
-    <string name="watch_share">Watch</string>
+    <string name="watch_share">Watch </string>
     <string name="empty_gridview_message">Choose a movie on the left</string>
 
     <string name="favorite">Favorite</string>
