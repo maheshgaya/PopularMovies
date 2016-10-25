@@ -206,7 +206,8 @@ public class DetailFragment extends Fragment  implements LoaderManager.LoaderCal
     private Intent createShareIntent(){
         Intent shareIntent = new Intent(android.content.Intent.ACTION_SEND);
         shareIntent.setType("text/plain");
-        shareIntent.putExtra(Intent.EXTRA_TEXT, getContext().getString(R.string.watch_share) + mMovieTitle + " " + mMovieFirstTrailerUrl + POPULAR_MOVIES_HASH);
+        shareIntent.putExtra(Intent.EXTRA_TEXT, getContext().getString(R.string.watch_share) + " " + mMovieTitle + " " +
+                mMovieFirstTrailerUrl + " " + POPULAR_MOVIES_HASH);
         return shareIntent;
     }
 
