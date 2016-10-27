@@ -39,7 +39,7 @@ import com.squareup.picasso.Picasso;
  * Deals with showing the information about the movie on a fragment
  * */
 
-public class DetailFragment extends Fragment  implements LoaderManager.LoaderCallbacks<Cursor>{
+public class DetailFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>{
     private static final String LOG_TAG = DetailFragment.class.getSimpleName();
 
     private static final String POPULAR_MOVIES_HASH = " #PopularMovies";
@@ -173,6 +173,7 @@ public class DetailFragment extends Fragment  implements LoaderManager.LoaderCal
         }finally {
             favoriteCursor.close();
         }
+
         return favoriteId;
     }
 
@@ -443,7 +444,7 @@ public class DetailFragment extends Fragment  implements LoaderManager.LoaderCal
                 if (data.getCount() > 0 && data.moveToFirst()){
                     //Allow to Unfavorite
                     mFavoriteButton.setText(getResources().getString(R.string.unfavorite));
-                    if (Build.VERSION.SDK_INT <= 23){
+                    if (Build.VERSION.SDK_INT < 23){
                         mFavoriteButton.setTextColor(getResources().getColor(R.color.colorPrimary));
                     } else {
                         mFavoriteButton.setTextColor(getResources().getColor(R.color.colorPrimary, null));
@@ -452,7 +453,7 @@ public class DetailFragment extends Fragment  implements LoaderManager.LoaderCal
                 } else {
                     //Allow to Favorite
                     mFavoriteButton.setText(getResources().getString(R.string.favorite));
-                    if (Build.VERSION.SDK_INT <= 23){
+                    if (Build.VERSION.SDK_INT < 23){
                         mFavoriteButton.setTextColor(getResources().getColor(R.color.colorBlack));
                     } else {
                         mFavoriteButton.setTextColor(getResources().getColor(R.color.colorBlack, null));
