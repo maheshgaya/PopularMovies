@@ -3,6 +3,12 @@ Android app that gets the most popular movies and top rated movies from The Movi
 
 Status of this project: COMPLETED (Oct 22, 2016)
 
+## Objectives of this project
+- learn the basics of Android Programming
+- learn about multi-threading such as AsyncTask, Services, Loaders, and SyncAdapters
+- learn about Content providers, and SQLite database
+- learn the basics of designing Android Apps
+
 ### Disclaimer
 - Logo icon from: [Icons8](https://icons8.com/web-app/11860/Clapperboard)
 - Material icons from [Google](https://design.google.com/icons/)
