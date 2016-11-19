@@ -8,6 +8,7 @@ Status of this project: COMPLETED (Oct 22, 2016)
 - learn about multi-threading such as AsyncTask, Services, Loaders, and SyncAdapters
 - learn about Content providers, and SQLite database
 - learn the basics of designing Android Apps
+- learn about responsive layout
 
 ### Disclaimer
 - Logo icon from: [Icons8](https://icons8.com/web-app/11860/Clapperboard)
