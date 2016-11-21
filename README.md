@@ -1,8 +1,6 @@
 # Popular Movies
 Android app that gets the most popular movies and top rated movies from The Movie DB.
 
-Status of this project: COMPLETED (Oct 22, 2016)
-
 ## Objectives of this project
 - learn the basics of Android Programming
 - learn about multi-threading such as AsyncTask, Services, Loaders, and SyncAdapters
