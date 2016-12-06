@@ -17,8 +17,8 @@ Recall from Stage 1, you built a UI that presented the user with a grid of movie
 What Will I Learn After Stage 2?
 - You will build a fully featured application that looks and feels natural on the latest Android operating system (Nougat, as of November 2016).
 
-# Rubrics
-## User Interface - Layout
+## Rubrics
+### User Interface - Layout
 
   `MEETS SPECIFICATIONS`
   
@@ -28,7 +28,7 @@ What Will I Learn After Stage 2?
 - Movie Details layout contains title, release date, movie poster, vote average, and plot synopsis.
 - Movie Details layout contains a section for displaying trailer videos and user reviews.
 
-## User Interface - Function
+### User Interface - Function
 
   `MEETS SPECIFICATIONS`
   
@@ -37,7 +37,7 @@ What Will I Learn After Stage 2?
 - When a trailer is selected, app uses an Intent to launch the trailer.
 - In the movies detail screen, a user can tap a button(for example, a star) to mark it as a Favorite.
 
-## Network API Implementation
+### Network API Implementation
 
   `MEETS SPECIFICATIONS`
   
@@ -45,14 +45,14 @@ What Will I Learn After Stage 2?
 - App requests for related videos for a selected movie via the /movie/{id}/videos endpoint in a background thread and displays those details when the user selects a movie.
 - App requests for user reviews for a selected movie via the /movie/{id}/reviews endpoint in a background thread and displays those details when the user selects a movie.
 
-## Data Persistence
+### Data Persistence
 
   `MEETS SPECIFICATIONS`
 
 - App saves a "Favorited" movie to SharedPreferences or a database using the movie’s id.
 - When the "favorites" setting option is selected, the main view displays the entire favorites collection based on movie IDs stored in SharedPreferences or a database.
 
-## General Project Guidelines
+### General Project Guidelines
 
   `MEETS SPECIFICATIONS`
 - App conforms to common standards found in the Android Nanodegree General Project Guidelines.
