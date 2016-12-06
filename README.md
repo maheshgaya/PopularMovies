@@ -1,8 +1,8 @@
 # Popular Movies
 Android app that gets the most popular movies and top rated movies from The Movie DB.
 
-- [Project 1](https://github.com/maheshgaya/PopularMovies/releases/tag/v1.0)
-- [Project 2 - this!] (https://github.com/maheshgaya/PopularMovies)
+- [Project 1](https://github.com/maheshgaya/PopularMovies/releases/tag/v1.0) - see [rubrics and overview](https://github.com/maheshgaya/PopularMovies/blob/master/STAGE1.md)
+- [Project 2 - this!] (https://github.com/maheshgaya/PopularMovies) - see [rubrics and overview](https://github.com/maheshgaya/PopularMovies/blob/master/STAGE2.md)
 
 ## Objectives of this project
 - learn the basics of Android Programming
