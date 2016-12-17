@@ -4,6 +4,8 @@ Android app that gets the most popular movies and top rated movies from The Movi
 - [Project 1](https://github.com/maheshgaya/PopularMovies/releases/tag/v1.0) - see [rubrics and overview](https://github.com/maheshgaya/PopularMovies/blob/master/STAGE1.md)
 - [Project 2 - this!] (https://github.com/maheshgaya/PopularMovies) - see [rubrics and overview](https://github.com/maheshgaya/PopularMovies/blob/master/STAGE2.md)
 
+<img src="https://github.com/maheshgaya/maheshgaya.com/blob/master/images/moviesApp.png" width=280/>
+
 ## Objectives of this project
 - learn the basics of Android Programming
 - learn about multi-threading such as AsyncTask, Services, Loaders, and SyncAdapters
