@@ -109,6 +109,7 @@ public class MovieContract{
         public static final String TABLE_NAME = "most_popular";
         //columns
         public static final String COLUMN_MOVIE_ID = "movie_id"; //foreign key
+        public static final String COLUMN_CURRENT_MOVIE = "current_movie";
 
         //building the paths
         public static Uri buildMostPopularUri(long id){
@@ -143,6 +144,7 @@ public class MovieContract{
         public static final String TABLE_NAME = "top_rated";
         //columns
         public static final String COLUMN_MOVIE_ID = "movie_id"; //foreign key
+        public static final String COLUMN_CURRENT_MOVIE = "current_movie";
 
         //building the paths
         public static Uri buildTopRatedUri(long id){

@@ -205,6 +205,8 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         Uri movieUri;
         String sortOrder;
+        String selection;
+
         if (Utility.getSortPreference(getContext())
                 .equals(getContext().getResources().getString(R.string.pref_popular))
                 ){
@@ -213,6 +215,7 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
                     MovieContract.MostPopularEntry._ID + " ASC";
             movieUri = MovieContract.MostPopularEntry.buildMostPopularMovies();
             //Log.d(TAG, "onCreateLoader: Most Popular: " + movieUri );
+            selection = MovieContract.MostPopularEntry.COLUMN_CURRENT_MOVIE + " = ? ";
 
         } else {
             //query top rated
@@ -220,12 +223,13 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
                     MovieContract.TopRatedEntry.COLUMN_MOVIE_ID + " ASC";
             movieUri = MovieContract.TopRatedEntry.buildTopRatedMovies();
             //Log.d(TAG, "onCreateLoader: Top Rated: " + movieUri );
+            selection = MovieContract.TopRatedEntry.COLUMN_CURRENT_MOVIE + " = ? ";
         }
         return new CursorLoader(getActivity(),
                 movieUri,
                 MOVIE_COLUMNS_PROJECTION,
-                null,
-                null,
+                selection,
+                new String[]{"1"},
                 sortOrder);
     }
 

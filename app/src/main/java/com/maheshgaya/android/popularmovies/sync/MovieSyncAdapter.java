@@ -340,9 +340,19 @@ public class MovieSyncAdapter extends AbstractThreadedSyncAdapter {
             if (mostPopularCursor.moveToFirst()){
                 int mostPopularIndex = mostPopularCursor.getColumnIndex(MovieContract.MostPopularEntry._ID);
                 mostPopularId = mostPopularCursor.getLong(mostPopularIndex);
+                ContentValues updateValues = new ContentValues();
+                updateValues.put(MovieContract.MostPopularEntry.COLUMN_CURRENT_MOVIE, 1);
+                //Update current movie to 1
+                int updateUri = getContext().getContentResolver().update(
+                        MovieContract.MostPopularEntry.CONTENT_URI,
+                        updateValues,
+                        MovieContract.MostPopularEntry.COLUMN_MOVIE_ID + " = ? ",
+                        new String[]{Long.toString(movieId)}
+                );
             } else {
                 ContentValues mostPopularValues = new ContentValues();
                 mostPopularValues.put(MovieContract.MostPopularEntry.COLUMN_MOVIE_ID, movieId);
+                mostPopularValues.put(MovieContract.MostPopularEntry.COLUMN_CURRENT_MOVIE, 1);
                 //Then add most popular to database
                 Uri insertUri = getContext().getContentResolver().insert(
                         MovieContract.MostPopularEntry.CONTENT_URI,
@@ -377,9 +387,19 @@ public class MovieSyncAdapter extends AbstractThreadedSyncAdapter {
             if (topRatedCursor.moveToFirst()){
                 int topRatedIndex = topRatedCursor.getColumnIndex(MovieContract.TopRatedEntry._ID);
                 topRatedId = topRatedCursor.getLong(topRatedIndex);
+                ContentValues updateValues = new ContentValues();
+                updateValues.put(MovieContract.TopRatedEntry.COLUMN_CURRENT_MOVIE, 1);
+                //Update current movie to 1
+                int updateUri = getContext().getContentResolver().update(
+                        MovieContract.TopRatedEntry.CONTENT_URI,
+                        updateValues,
+                        MovieContract.TopRatedEntry.COLUMN_MOVIE_ID + " = ? ",
+                        new String[]{Long.toString(movieId)}
+                );
             } else {
                 ContentValues topRatedValues = new ContentValues();
                 topRatedValues.put(MovieContract.TopRatedEntry.COLUMN_MOVIE_ID, movieId);
+                topRatedValues.put(MovieContract.TopRatedEntry.COLUMN_CURRENT_MOVIE, 1);
                 //Then add top rated to database
                 Uri insertUri = getContext().getContentResolver().insert(
                         MovieContract.TopRatedEntry.CONTENT_URI,
@@ -654,8 +674,30 @@ public class MovieSyncAdapter extends AbstractThreadedSyncAdapter {
             //add movie to movie table
             long movieId = addMovie(movieApiId, movieTitle, movieThumbnailURL, moviePlot, movieRatings, movieReleaseDate);
             if (movieRanking.equals(POPULAR_MOVIE_RANKING)){
+                //update all current movies to zero
+                ContentValues updateValues = new ContentValues();
+                updateValues.put(MovieContract.MostPopularEntry.COLUMN_CURRENT_MOVIE, 0);
+                //Update current movie to 1
+                int updateUri = getContext().getContentResolver().update(
+                        MovieContract.MostPopularEntry.CONTENT_URI,
+                        updateValues,
+                        null,
+                        null
+                );
+
                 long mostPopularMovieId = addMovieToMostPopular(movieId);
             } else {
+                //update all current movies to zero
+                ContentValues updateValues = new ContentValues();
+                updateValues.put(MovieContract.TopRatedEntry.COLUMN_CURRENT_MOVIE, 0);
+                //Update current movie to 1
+                int updateUri = getContext().getContentResolver().update(
+                        MovieContract.TopRatedEntry.CONTENT_URI,
+                        updateValues,
+                        null,
+                        null
+                );
+
                 long topRatedMovieId = addMovieToTopRated(movieId);
             }
             //then search for reviews and trailers

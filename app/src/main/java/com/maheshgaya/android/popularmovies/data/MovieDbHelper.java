@@ -10,7 +10,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 public class MovieDbHelper extends SQLiteOpenHelper{
     public static final String DATABASE_NAME = "movie.db";
-    public static final int DATABASE_VERSION = 5;
+    public static final int DATABASE_VERSION = 6;
 
     public MovieDbHelper (Context context){
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -61,7 +61,8 @@ public class MovieDbHelper extends SQLiteOpenHelper{
         /*
         * CREATE TABLE most_popular (
         * most_popular_id INTEGER PRIMARY KEY AUTOINCREMENT,
-        * movie_id INTEGER PRIMARY KEY NOT NULL,
+        * movie_id INTEGER NOT NULL,
+        * current_movie INTEGER NOT NULL,
         * FOREIGN KEY (movie_id) REFERENCES movie(movie_id)
         * );
          */
@@ -69,6 +70,7 @@ public class MovieDbHelper extends SQLiteOpenHelper{
                 "CREATE TABLE " + MovieContract.MostPopularEntry.TABLE_NAME + "(" +
                         MovieContract.MostPopularEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                         MovieContract.MostPopularEntry.COLUMN_MOVIE_ID + " INTEGER NOT NULL, " +
+                        MovieContract.MostPopularEntry.COLUMN_CURRENT_MOVIE + " INTEGER NOT NULL," +
                         "FOREIGN KEY (" + MovieContract.MostPopularEntry.COLUMN_MOVIE_ID + ") " +
                         "REFERENCES " + MovieContract.MovieEntry.TABLE_NAME + "(" + MovieContract.MovieEntry._ID + ")" +
                         ");";
@@ -77,6 +79,7 @@ public class MovieDbHelper extends SQLiteOpenHelper{
         * CREATE TABLE top_rated (
         * top_rated_id INTEGER PRIMARY KEY AUTOINCREMENT,
         * movie_id INTEGER NOT NULL,
+        * current_movie INTEGER NOT NULL,
         * FOREIGN KEY (movie_id) REFERENCES movie(movie_id)
         * );
          */
@@ -84,6 +87,7 @@ public class MovieDbHelper extends SQLiteOpenHelper{
                 "CREATE TABLE " + MovieContract.TopRatedEntry.TABLE_NAME + "(" +
                         MovieContract.TopRatedEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                         MovieContract.TopRatedEntry.COLUMN_MOVIE_ID + " INTEGER NOT NULL, " +
+                        MovieContract.TopRatedEntry.COLUMN_CURRENT_MOVIE + " INTEGER NOT NULL, " +
                         "FOREIGN KEY (" + MovieContract.TopRatedEntry.COLUMN_MOVIE_ID + ") " +
                         "REFERENCES " + MovieContract.MovieEntry.TABLE_NAME + "(" + MovieContract.MovieEntry._ID + ")" +
                         ");";
