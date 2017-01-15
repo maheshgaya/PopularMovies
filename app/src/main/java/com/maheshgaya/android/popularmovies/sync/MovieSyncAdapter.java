@@ -2,6 +2,7 @@ package com.maheshgaya.android.popularmovies.sync;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
+import android.app.NotificationManager;
 import android.content.AbstractThreadedSyncAdapter;
 import android.content.ContentProviderClient;
 import android.content.ContentResolver;
@@ -16,6 +17,7 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.maheshgaya.android.popularmovies.BuildConfig;
@@ -53,6 +55,8 @@ public class MovieSyncAdapter extends AbstractThreadedSyncAdapter {
     public static final int SYNC_INTERVAL = 60 * 60 * 24;
     public static final int SYNC_FLEXTIME = SYNC_INTERVAL/3;
 
+    private int mMoviesNumber = 0;
+
     public MovieSyncAdapter(Context context, boolean autoInitialize) {
         super(context, autoInitialize);
     }
@@ -60,6 +64,7 @@ public class MovieSyncAdapter extends AbstractThreadedSyncAdapter {
     public void onPerformSync(Account account, Bundle bundle, String s, ContentProviderClient contentProviderClient, SyncResult syncResult) {
         Log.d(TAG, "onPerformSync Called.");
         String sortPref = Utility.getSortPreference(getContext());
+        mMoviesNumber = 0;
         //check if device is connected to internet
         //      if not just show blank fragment
         if (!isOnline()){
@@ -162,6 +167,16 @@ public class MovieSyncAdapter extends AbstractThreadedSyncAdapter {
 
         try{
             getMovieDatafromJson(movieJsonStr, movieRanking);
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(getContext())
+                    .setSmallIcon(R.drawable.ic_logo)
+                    .setContentTitle(getContext().getString(R.string.app_name))
+                    .setContentText(mMoviesNumber + " " + getContext().getString(R.string.movies_notification));
+
+            NotificationManager mNotificationManager =
+                    (NotificationManager) getContext().getSystemService(Context.NOTIFICATION_SERVICE);
+// mId allows you to update the notification later on.
+            mNotificationManager.notify(111, builder.build());
+
         } catch (JSONException e){
             Log.e(TAG, "doInBackground: ", e );
         }
@@ -660,6 +675,28 @@ public class MovieSyncAdapter extends AbstractThreadedSyncAdapter {
         JSONObject movieJson = new JSONObject(movieJsonStr);
         JSONArray movieArray = movieJson.getJSONArray(Constant.TMDB_RESULTS);
         //Log.d(TAG, "getMovieDatafromJson: " + movieArray.toString());
+        mMoviesNumber = movieArray.length();
+
+        if (movieRanking.equals(POPULAR_MOVIE_RANKING)){
+            //delete all Most Popular movies
+            int deleteUri = getContext().getContentResolver().delete(
+                    MovieContract.MostPopularEntry.CONTENT_URI,
+                    null,
+                    null
+            );
+            //Log.d(TAG, "delete all getMovieDatafromJson: " + deleteUri);
+        } else {
+            //delete all topRated movies
+            int deleteUri = getContext().getContentResolver().delete(
+                    MovieContract.TopRatedEntry.CONTENT_URI,
+                    null,
+                    null
+            );
+            //Log.d(TAG, "delete all getMovieDatafromJson: " + deleteUri);
+        }
+
+
+
 
         for (int i = 0; i < movieArray.length(); i++){
 
@@ -674,30 +711,10 @@ public class MovieSyncAdapter extends AbstractThreadedSyncAdapter {
             //add movie to movie table
             long movieId = addMovie(movieApiId, movieTitle, movieThumbnailURL, moviePlot, movieRatings, movieReleaseDate);
             if (movieRanking.equals(POPULAR_MOVIE_RANKING)){
-                //update all current movies to zero
-                ContentValues updateValues = new ContentValues();
-                updateValues.put(MovieContract.MostPopularEntry.COLUMN_CURRENT_MOVIE, 0);
-                
-                int updateUri = getContext().getContentResolver().update(
-                        MovieContract.MostPopularEntry.CONTENT_URI,
-                        updateValues,
-                        null,
-                        null
-                );
-                //Update current movie to 1
+                //add current movie
                 long mostPopularMovieId = addMovieToMostPopular(movieId);
             } else {
-                //update all current movies to zero
-                ContentValues updateValues = new ContentValues();
-                updateValues.put(MovieContract.TopRatedEntry.COLUMN_CURRENT_MOVIE, 0);
-               
-                int updateUri = getContext().getContentResolver().update(
-                        MovieContract.TopRatedEntry.CONTENT_URI,
-                        updateValues,
-                        null,
-                        null
-                );
-                //Update current movie to 1
+                //add current movie
                 long topRatedMovieId = addMovieToTopRated(movieId);
             }
             //then search for reviews and trailers

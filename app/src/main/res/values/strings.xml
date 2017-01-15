@@ -30,4 +30,6 @@
 
     <string name="sync_account_type">popularmovies.android.maheshgaya.com</string>
     <string name="content_authority">com.maheshgaya.android.popularmovies.app</string>
+
+    <string name="movies_notification">Movies updated</string>
 </resources>
