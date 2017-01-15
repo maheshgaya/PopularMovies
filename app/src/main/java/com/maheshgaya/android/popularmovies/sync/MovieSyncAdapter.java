@@ -677,27 +677,27 @@ public class MovieSyncAdapter extends AbstractThreadedSyncAdapter {
                 //update all current movies to zero
                 ContentValues updateValues = new ContentValues();
                 updateValues.put(MovieContract.MostPopularEntry.COLUMN_CURRENT_MOVIE, 0);
-                //Update current movie to 1
+                
                 int updateUri = getContext().getContentResolver().update(
                         MovieContract.MostPopularEntry.CONTENT_URI,
                         updateValues,
                         null,
                         null
                 );
-
+                //Update current movie to 1
                 long mostPopularMovieId = addMovieToMostPopular(movieId);
             } else {
                 //update all current movies to zero
                 ContentValues updateValues = new ContentValues();
                 updateValues.put(MovieContract.TopRatedEntry.COLUMN_CURRENT_MOVIE, 0);
-                //Update current movie to 1
+               
                 int updateUri = getContext().getContentResolver().update(
                         MovieContract.TopRatedEntry.CONTENT_URI,
                         updateValues,
                         null,
                         null
                 );
-
+                //Update current movie to 1
                 long topRatedMovieId = addMovieToTopRated(movieId);
             }
             //then search for reviews and trailers
