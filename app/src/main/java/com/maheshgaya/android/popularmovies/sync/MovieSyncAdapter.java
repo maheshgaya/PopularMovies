@@ -3,12 +3,14 @@ package com.maheshgaya.android.popularmovies.sync;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.AbstractThreadedSyncAdapter;
 import android.content.ContentProviderClient;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SyncRequest;
 import android.content.SyncResult;
 import android.database.Cursor;
@@ -18,6 +20,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
 
 import com.maheshgaya.android.popularmovies.BuildConfig;
@@ -25,6 +28,7 @@ import com.maheshgaya.android.popularmovies.Constant;
 import com.maheshgaya.android.popularmovies.R;
 import com.maheshgaya.android.popularmovies.Utility;
 import com.maheshgaya.android.popularmovies.data.MovieContract;
+import com.maheshgaya.android.popularmovies.ui.MainActivity;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -171,10 +175,30 @@ public class MovieSyncAdapter extends AbstractThreadedSyncAdapter {
                     .setSmallIcon(R.drawable.ic_logo)
                     .setContentTitle(getContext().getString(R.string.app_name))
                     .setContentText(mMoviesNumber + " " + getContext().getString(R.string.movies_notification));
+            // Creates an explicit intent for an Activity in your app
+            Intent resultIntent = new Intent(getContext(), MainActivity.class);
+
+            // The stack builder object will contain an artificial back stack for the
+            // started Activity.
+            // This ensures that navigating backward from the Activity leads out of
+            // your application to the Home screen.
+            TaskStackBuilder stackBuilder = TaskStackBuilder.create(getContext());
+            // Adds the back stack for the Intent (but not the Intent itself)
+            stackBuilder.addParentStack(MainActivity.class);
+            // Adds the Intent that starts the Activity to the top of the stack
+            stackBuilder.addNextIntent(resultIntent);
+            PendingIntent resultPendingIntent =
+                    stackBuilder.getPendingIntent(
+                            0,
+                            PendingIntent.FLAG_UPDATE_CURRENT
+                    );
+            builder.setContentIntent(resultPendingIntent);
+            builder.setAutoCancel(true);
 
             NotificationManager mNotificationManager =
                     (NotificationManager) getContext().getSystemService(Context.NOTIFICATION_SERVICE);
-// mId allows you to update the notification later on.
+
+            // mId allows you to update the notification later on.
             mNotificationManager.notify(111, builder.build());
 
         } catch (JSONException e){
